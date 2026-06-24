@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ !empty($header_title) ? $header_title : '' }} - School</title>
+    <title>{{ !empty($header_title) ? $header_title : '' }} - Gestion Entreprise</title>
 
-    <!-- Google Font: Montserrat (UPF Style) -->
+    <!-- Google Font: Montserrat -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
     <!-- Font Awesome -->
@@ -21,8 +21,6 @@
     <link rel="stylesheet" href="{{ url('/plugins/jqvmap/jqvmap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ url('/dist/css/adminlte.min.css') }}">
-    <!-- University custom styles -->
-    <link rel="stylesheet" href="/dist/css/university.css">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ url('/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Daterange picker -->

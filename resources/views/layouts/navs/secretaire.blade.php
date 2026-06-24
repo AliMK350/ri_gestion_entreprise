@@ -5,50 +5,26 @@
     </a>
 </li>
 <li class="nav-item">
-    <a href="{{ route('secretaire.notes.index') }}" class="nav-link @if (Request::segment(2) == 'notes') active @endif">
-        <i class="nav-icon fas fa-star"></i>
-        <p>Saisie évaluations</p>
+    <a href="{{ url('secretaire/clients/list') }}" class="nav-link @if (Request::segment(2) == 'clients') active @endif">
+        <i class="nav-icon fas fa-user-tie"></i>
+        <p>Clients</p>
     </a>
 </li>
 <li class="nav-item">
-    <a href="{{ route('secretaire.absences.index') }}" class="nav-link @if (Request::segment(2) == 'absences') active @endif">
-        <i class="nav-icon fas fa-calendar-times"></i>
-        <p>Suivi absences</p>
+    <a href="{{ url('secretaire/devis/list') }}" class="nav-link @if (Request::segment(2) == 'devis') active @endif">
+        <i class="nav-icon fas fa-file-invoice"></i>
+        <p>Devis</p>
     </a>
 </li>
 <li class="nav-item">
-    <a href="{{ route('secretaire.cahier-texte.index') }}" class="nav-link @if (Request::segment(2) == 'cahier-texte') active @endif">
-        <i class="nav-icon fas fa-book-open"></i>
-        <p>Journal de bord</p>
+    <a href="{{ url('secretaire/factures/list') }}" class="nav-link @if (Request::segment(2) == 'factures') active @endif">
+        <i class="nav-icon fas fa-file-invoice-dollar"></i>
+        <p>Factures</p>
     </a>
 </li>
 <li class="nav-item">
-    <a href="{{ route('secretaire.supports.index') }}" class="nav-link @if (Request::segment(2) == 'supports-cours') active @endif">
-        <i class="nav-icon fas fa-file-alt"></i>
-        <p>Procédures & Docs</p>
-    </a>
-</li>
-<li class="nav-item">
-    <a href="{{ route('secretaire.annonces.index') }}" class="nav-link @if (Request::segment(2) == 'annonces') active @endif">
-        <i class="nav-icon fas fa-bullhorn"></i>
-        <p>Annonces</p>
-    </a>
-</li>
-<li class="nav-item">
-    <a href="{{ route('secretaire.emploi-du-temps.index') }}" class="nav-link @if (Request::segment(2) == 'emploi-du-temps') active @endif">
-        <i class="nav-icon fas fa-calendar-alt"></i>
-        <p>Planning de travail</p>
-    </a>
-</li>
-<li class="nav-item">
-    <a href="{{ route('secretaire.reservations.index') }}" class="nav-link @if (Request::segment(2) == 'reservations') active @endif">
-        <i class="nav-icon fas fa-door-open"></i>
-        <p>Réservations Salles</p>
-    </a>
-</li>
-<li class="nav-item">
-    <a href="{{ route('secretaire.demandes.index') }}" class="nav-link @if (Request::segment(2) == 'demandes') active @endif">
-        <i class="nav-icon fas fa-file-contract"></i>
-        <p>Demandes RH</p>
+    <a href="{{ url('secretaire/recus/list') }}" class="nav-link @if (Request::segment(2) == 'recus') active @endif">
+        <i class="nav-icon fas fa-receipt"></i>
+        <p>Reçus</p>
     </a>
 </li>

@@ -2,22 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Absence extends Model
 {
-    use HasFactory;
-
-    protected $table = 'absences';
-
     protected $fillable = [
-        'student_id',
-        'subject_name',
-        'date',
-        'justifiee',
-        'motif',
-        'created_by',
+        'employee_id', 'date', 'reason',
     ];
-}
 
+    protected $casts = [
+        'date' => 'date',
+    ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+}

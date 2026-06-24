@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -17,16 +14,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->tinyInteger('user_type')->default(3); // 1=Admin, 2=Secrétaire, 3=Employé, 4=Gérant
+            $table->tinyInteger('is_delete')->default(0);
             $table->rememberToken();
-            $table->tinyInteger('user_type')->default('3'); // 1. Administrateur 2. Secrétaire 3. Employé 4. Gérant
-            $table->tinyInteger('is_delete')->default('0'); // 0. Not deleted 1.Deleted
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

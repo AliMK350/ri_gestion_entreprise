@@ -13,33 +13,21 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'email'    => 'required|email',
+            'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)
-            ->where('is_delete', 0)
-            ->first();
+        $user = User::where('email', $request->email)->where('is_delete', 0)->first();
 
-        if (empty($user) || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid email or password',
-            ], 401);
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Identifiants invalides'], 401);
         }
 
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'success' => true,
-            'message' => 'Login successful',
+            'user'  => $user,
             'token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'user_type' => $user->user_type,
-            ],
         ]);
     }
 
@@ -47,17 +35,11 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully',
-        ]);
+        return response()->json(['message' => 'Déconnecté']);
     }
 
     public function me(Request $request)
     {
-        return response()->json([
-            'success' => true,
-            'user' => $request->user(),
-        ]);
+        return response()->json($request->user());
     }
 }

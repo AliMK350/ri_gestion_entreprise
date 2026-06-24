@@ -1,18 +1,7 @@
 <aside class="main-sidebar sidebar-light-primary elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link" style="display: flex; justify-content: center; align-items: center; padding: 1.5rem 0; border-bottom: 1px solid #eee;">
-        <svg width="150" height="60" viewBox="0 0 150 60" xmlns="http://www.w3.org/2000/svg">
-            <g fill="#134685">
-                <rect x="5" y="5" width="28" height="28" />
-                <rect x="35" y="5" width="28" height="28" />
-                <rect x="65" y="5" width="28" height="28" />
-            </g>
-            <rect x="95" y="21" width="12" height="12" fill="#aa1375" />
-            <text x="19" y="27" fill="#ffffff" font-family="Georgia, serif" font-size="22" font-weight="bold" text-anchor="middle">U</text>
-            <text x="49" y="27" fill="#ffffff" font-family="Georgia, serif" font-size="22" font-weight="bold" text-anchor="middle">P</text>
-            <text x="79" y="27" fill="#ffffff" font-family="Georgia, serif" font-size="22" font-weight="bold" text-anchor="middle">F</text>
-            <text x="5" y="50" fill="#7b848c" font-family="'Montserrat', sans-serif" font-size="16">Enterprise</text>
-        </svg>
+        <span style="font-family: Montserrat, sans-serif; font-weight: 700; font-size: 1.4rem; color: #134685;">Gestion Entreprise</span>
     </a>
 
     <!-- Sidebar -->

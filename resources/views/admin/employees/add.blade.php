@@ -1,0 +1,21 @@
+@extends('layouts.app')
+@section('content')
+<div class="content-wrapper">
+    <section class="content-header"><div class="container-fluid"><h1>Ajouter un Employé</h1></div></section>
+    <section class="content"><div class="container-fluid"><div class="card card-primary">
+        <form method="post">@csrf
+            <div class="card-body">
+                <div class="form-group"><label>Nom *</label><input type="text" name="name" class="form-control" required value="{{ old('name') }}"></div>
+                <div class="form-group"><label>Email *</label><input type="email" name="email" class="form-control" required value="{{ old('email') }}"><div class="text-danger">{{ $errors->first('email') }}</div></div>
+                <div class="form-group"><label>Téléphone</label><input type="text" name="phone" class="form-control" value="{{ old('phone') }}"></div>
+                <div class="form-group"><label>Poste</label><input type="text" name="position" class="form-control" value="{{ old('position') }}"></div>
+                <div class="form-group"><label>Département</label><input type="text" name="department" class="form-control" value="{{ old('department') }}"></div>
+                <div class="form-group"><label>Date d'embauche</label><input type="date" name="hired_at" class="form-control" value="{{ old('hired_at') }}"></div>
+                <div class="form-group"><label>Statut *</label><select name="status" class="form-control"><option value="0">Actif</option><option value="1">Inactif</option></select></div>
+                <div class="form-group"><label>Compte utilisateur lié</label><select name="user_id" class="form-control"><option value="">— Aucun —</option>@foreach($users as $u)<option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})</option>@endforeach</select></div>
+            </div>
+            <div class="card-footer"><button class="btn btn-primary">Enregistrer</button> <a href="{{ url('admin/employees/list') }}" class="btn btn-default">Annuler</a></div>
+        </form>
+    </div></div></section>
+</div>
+@endsection
