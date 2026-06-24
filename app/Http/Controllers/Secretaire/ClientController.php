@@ -85,14 +85,7 @@ class ClientController extends Controller
 
     public function delete($id)
     {
-        $client = Client::where('id', $id)->where('is_delete', 0)->first();
-        if (empty($client)) {
-            abort(404);
-        }
-        $client->is_delete = 1;
-        $client->save();
-
-        return redirect('secretaire/clients/list')->with('success', 'Client supprimé.');
+        abort(403, 'Accès refusé. Seul le gérant peut supprimer un client.');
     }
 
     public function show($id)

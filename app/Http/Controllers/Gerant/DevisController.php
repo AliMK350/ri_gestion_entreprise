@@ -10,7 +10,7 @@ class DevisController extends Controller
 {
     public function list()
     {
-        $data['getRecord']    = Quote::with('client')->orderBy('created_at', 'desc')->get();
+        $data['getRecord']    = Quote::whereDoesntHave('invoices')->with('client')->orderBy('created_at', 'desc')->get();
         $data['header_title'] = 'Validation des Devis';
         return view('gerant.devis.list', $data);
     }

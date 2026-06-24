@@ -21,7 +21,7 @@ class FactureController extends Controller
     public function add()
     {
         $data['clients']      = Client::where('is_delete', 0)->orderBy('name')->get();
-        $data['quotes']       = Quote::where('status', 'accepted')->with('client')->get();
+        $data['quotes']       = Quote::whereIn('status', ['accepted', 'sent'])->whereDoesntHave('invoices')->with('client')->get();
         $data['header_title'] = 'Nouvelle Facture';
         return view('secretaire.factures.add', $data);
     }
@@ -58,7 +58,7 @@ class FactureController extends Controller
     {
         $data['getRecord'] = Invoice::findOrFail($id);
         $data['clients']   = Client::where('is_delete', 0)->orderBy('name')->get();
-        $data['quotes']    = Quote::where('status', 'accepted')->with('client')->get();
+        $data['quotes']    = Quote::whereIn('status', ['accepted', 'sent'])->whereDoesntHave('invoices')->with('client')->get();
         $data['header_title'] = 'Modifier la Facture';
         return view('secretaire.factures.edit', $data);
     }

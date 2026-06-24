@@ -101,7 +101,6 @@ Route::group(['middleware' => 'secretaire', 'prefix' => 'secretaire'], function 
         Route::post('/add', [SecretaireClientController::class, 'insert']);
         Route::get('/edit/{id}', [SecretaireClientController::class, 'edit']);
         Route::post('/edit/{id}', [SecretaireClientController::class, 'update']);
-        Route::get('/delete/{id}', [SecretaireClientController::class, 'delete']);
         Route::get('/show/{id}', [SecretaireClientController::class, 'show']);
     });
 
