@@ -2,13 +2,20 @@
 <html lang="en">
 
 <head>
+    <!-- Anti-flash: apply saved theme before CSS renders -->
+    <script>
+        (function(){
+            var t = localStorage.getItem('ri_theme');
+            if (t) document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ !empty($header_title) ? $header_title : '' }} - Gestion Entreprise</title>
+    <title>{{ !empty($header_title) ? $header_title : '' }} — Ri Communication</title>
 
     <!-- Google Font: Montserrat -->
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ url('/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Ionicons -->
@@ -21,6 +28,8 @@
     <link rel="stylesheet" href="{{ url('/plugins/jqvmap/jqvmap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ url('/dist/css/adminlte.min.css') }}">
+    <!-- Ri Brand Theme -->
+    <link rel="stylesheet" href="{{ url('/css/theme.css') }}">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ url('/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Daterange picker -->
@@ -28,6 +37,7 @@
     <!-- summernote -->
     <link rel="stylesheet" href="{{ url('/plugins/summernote/summernote-bs4.min.css') }}">
     @yield('styles')
+    @stack('dashboard_styles')
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -88,6 +98,50 @@
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ url('/dist/js/pages/dashboard.js') }}"></script>
     @yield('scripts')
+    @stack('dashboard_scripts')
+
+    <!-- Dark Mode Script -->
+    <script>
+    (function() {
+        var html = document.documentElement;
+        var btn  = document.getElementById('darkModeToggle');
+        var icon = document.getElementById('toggleIcon');
+        var lbl  = document.getElementById('toggleLabel');
+
+        function applyTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('ri_theme', theme);
+            if (theme === 'dark') {
+                if (icon) icon.textContent = '☀️';
+                if (lbl)  lbl.textContent  = 'Mode clair';
+                // AdminLTE sidebar class swap
+                document.querySelectorAll('.main-sidebar').forEach(function(el) {
+                    el.classList.remove('sidebar-light-primary');
+                    el.classList.add('sidebar-dark-primary');
+                });
+            } else {
+                if (icon) icon.textContent = '🌙';
+                if (lbl)  lbl.textContent  = 'Mode sombre';
+                document.querySelectorAll('.main-sidebar').forEach(function(el) {
+                    el.classList.remove('sidebar-dark-primary');
+                    el.classList.add('sidebar-light-primary');
+                });
+            }
+        }
+
+        // Init on load
+        var saved = localStorage.getItem('ri_theme') || 'light';
+        applyTheme(saved);
+
+        // Toggle on click
+        if (btn) {
+            btn.addEventListener('click', function() {
+                var current = html.getAttribute('data-theme');
+                applyTheme(current === 'dark' ? 'light' : 'dark');
+            });
+        }
+    })();
+    </script>
 </body>
 
 </html>

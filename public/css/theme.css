@@ -1,55 +1,719 @@
-/* theme.css - Premium dark mode with glassmorphism */
+/* ===========================================
+   Ri Communication — Brand Theme
+   Palette: Blanc #FFFFFF, Cyan #00ADEF, Noir #111111
+   Font: Montserrat (already loaded in app.blade.php)
+   =========================================== */
+
 :root {
-  --bg-main: hsl(220, 30%, 10%);
-  --bg-card: hsla(220, 30%, 12%, 0.6);
-  --accent: hsl(190, 80%, 50%);
-  --text-primary: hsl(0, 0%, 90%);
-  --text-secondary: hsl(0, 0%, 70%);
-  --border-radius: 1rem;
-  --blur: 12px;
+  --ri-blue:       #00ADEF;
+  --ri-blue-dark:  #0090CC;
+  --ri-blue-light: #E8F7FD;
+  --ri-black:      #111111;
+  --ri-gray:       #4A4A4A;
+  --ri-light-gray: #F5F7FA;
+  --ri-border:     #D9EEF8;
+  --ri-white:      #FFFFFF;
+  --sidebar-width: 250px;
+  --header-height: 57px;
 }
 
+/* ---- GLOBAL ---- */
 body {
-  background: var(--bg-main);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 0;
+  font-family: 'Montserrat', sans-serif !important;
+  background: var(--ri-light-gray) !important;
+  color: var(--ri-black) !important;
 }
 
-.card, .glass {
-  background: var(--bg-card);
-  backdrop-filter: blur(var(--blur));
-  border-radius: var(--border-radius);
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 30px rgba(0,0,0,0.5);
-  padding: 1rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* ---- SIDEBAR ---- */
+.main-sidebar {
+  background: var(--ri-white) !important;
+  border-right: 2px solid var(--ri-blue) !important;
+  box-shadow: 2px 0 12px rgba(0, 173, 239, 0.08) !important;
 }
 
-.card:hover, .glass:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+/* Brand logo area */
+.brand-link {
+  background: var(--ri-white) !important;
+  border-bottom: 1px solid var(--ri-border) !important;
+  padding: 1rem 0.75rem !important;
 }
 
+.brand-link:hover {
+  background: var(--ri-blue-light) !important;
+}
+
+.brand-image {
+  margin-top: 0 !important;
+  max-height: 48px !important;
+  width: auto !important;
+  max-width: 160px !important;
+}
+
+/* Sidebar text/nav links */
+.nav-sidebar .nav-link {
+  color: var(--ri-gray) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em;
+  border-radius: 6px !important;
+  margin: 2px 8px !important;
+  padding: 0.5rem 0.75rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-sidebar .nav-link:hover {
+  background: var(--ri-blue-light) !important;
+  color: var(--ri-blue) !important;
+}
+
+.nav-sidebar .nav-link.active {
+  background: var(--ri-blue) !important;
+  color: var(--ri-white) !important;
+  box-shadow: 0 2px 8px rgba(0, 173, 239, 0.30) !important;
+}
+
+.nav-sidebar .nav-link .nav-icon {
+  color: inherit !important;
+  width: 1.4rem !important;
+}
+
+/* User panel */
+.user-panel {
+  border-bottom: 1px solid var(--ri-border) !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.user-panel .info a {
+  color: var(--ri-black) !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+
+/* ---- TOP NAVBAR ---- */
+.main-header.navbar {
+  background: var(--ri-white) !important;
+  border-bottom: 2px solid var(--ri-blue) !important;
+  box-shadow: 0 2px 8px rgba(0, 173, 239, 0.08) !important;
+}
+
+.main-header .nav-link {
+  color: var(--ri-gray) !important;
+}
+
+.main-header .nav-link:hover {
+  color: var(--ri-blue) !important;
+}
+
+/* ---- CONTENT WRAPPER ---- */
+.content-wrapper {
+  background: var(--ri-light-gray) !important;
+}
+
+/* ---- CONTENT HEADER ---- */
+.content-header h1 {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 1.3rem !important;
+  color: var(--ri-black) !important;
+}
+
+.content-header .breadcrumb {
+  font-size: 0.78rem !important;
+}
+
+.content-header .breadcrumb-item a {
+  color: var(--ri-blue) !important;
+}
+
+/* ---- CARDS ---- */
+.card {
+  border: none !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07) !important;
+  background: var(--ri-white) !important;
+}
+
+.card-header {
+  background: var(--ri-white) !important;
+  border-bottom: 2px solid var(--ri-blue-light) !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  color: var(--ri-black) !important;
+  border-radius: 10px 10px 0 0 !important;
+}
+
+.card-outline.card-primary {
+  border-top: 3px solid var(--ri-blue) !important;
+}
+
+/* Small stat cards */
+.small-box {
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 16px rgba(0, 173, 239, 0.12) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.small-box:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 24px rgba(0, 173, 239, 0.2) !important;
+}
+
+.small-box .inner h3 {
+  font-weight: 800 !important;
+}
+
+/* Override AdminLTE primary blue with Ri blue */
+.bg-primary, .bg-info {
+  background-color: var(--ri-blue) !important;
+}
+
+.small-box.bg-info {
+  background: linear-gradient(135deg, var(--ri-blue), var(--ri-blue-dark)) !important;
+}
+
+/* ---- BUTTONS ---- */
 .btn-primary {
-  background: var(--accent);
-  border: none;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius);
-  transition: background 0.2s;
+  background: var(--ri-blue) !important;
+  border-color: var(--ri-blue) !important;
+  color: #fff !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
 }
 
-.btn-primary:hover {
-  background: hsl(190, 80%, 45%);
+.btn-primary:hover, .btn-primary:focus {
+  background: var(--ri-blue-dark) !important;
+  border-color: var(--ri-blue-dark) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(0, 173, 239, 0.35) !important;
 }
 
-.badge-pending { background-color: #f1c40f; color: #212529; }
-.badge-accepted { background-color: #2ecc71; color: #212529; }
-.badge-refused { background-color: #e74c3c; color: #212529; }
+.btn-secondary {
+  background: var(--ri-light-gray) !important;
+  border-color: var(--ri-border) !important;
+  color: var(--ri-gray) !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+}
 
-/* Misc utilities */
-.text-muted { color: var(--text-secondary) !important; }
-.mt-2 { margin-top: 0.5rem; }
-.mb-2 { margin-bottom: 0.5rem; }
+.btn-success {
+  border-radius: 6px !important;
+}
+
+.btn-danger {
+  border-radius: 6px !important;
+}
+
+/* ---- FORMS ---- */
+.form-control {
+  border: 1.5px solid var(--ri-border) !important;
+  border-radius: 6px !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 0.85rem !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.form-control:focus {
+  border-color: var(--ri-blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 173, 239, 0.15) !important;
+}
+
+.input-group-text {
+  background: var(--ri-blue-light) !important;
+  border: 1.5px solid var(--ri-border) !important;
+  color: var(--ri-blue) !important;
+}
+
+/* ---- TABLES ---- */
+.table thead th {
+  background: var(--ri-blue) !important;
+  color: var(--ri-white) !important;
+  font-weight: 700 !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  border: none !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--ri-blue-light) !important;
+}
+
+.table tbody tr:hover {
+  background: rgba(0, 173, 239, 0.06) !important;
+}
+
+/* ---- BADGES ---- */
+.badge-pending  { background-color: #f59e0b; color: #fff; }
+.badge-accepted { background-color: #10b981; color: #fff; }
+.badge-refused  { background-color: #ef4444; color: #fff; }
+
+/* ---- FOOTER ---- */
+.main-footer {
+  background: var(--ri-white) !important;
+  border-top: 1px solid var(--ri-border) !important;
+  color: var(--ri-gray) !important;
+  font-size: 0.78rem !important;
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+/* ---- LOGIN PAGE ---- */
+.login-page {
+  background: var(--ri-white) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-box {
+  z-index: 2;
+  position: relative;
+}
+
+.login-box .card {
+  border-radius: 14px !important;
+  box-shadow: 0 8px 40px rgba(0, 173, 239, 0.15) !important;
+  border: none !important;
+}
+
+.login-box .card-header {
+  background: var(--ri-white) !important;
+  border-bottom: 2px solid var(--ri-blue-light) !important;
+  padding: 1.5rem !important;
+}
+
+.login-box-msg {
+  color: var(--ri-gray) !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+}
+
+.login-page .icheck-primary > input:first-child:checked + label::before,
+.login-page .icheck-primary > input:first-child:checked + input[type="hidden"] + label::before {
+  background-color: var(--ri-blue) !important;
+  border-color: var(--ri-blue) !important;
+}
+
+/* Login background image */
+.login-bg-overlay {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%; height: 55%;
+  background: url('/dist/img/ri-bg.png') center bottom / cover no-repeat;
+  opacity: 0.35;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ---- SIDEBAR SECTION TITLES ---- */
+.nav-header {
+  color: var(--ri-blue) !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  padding: 0.75rem 1rem 0.25rem !important;
+}
+
+/* ---- PAGINATION ---- */
+.page-item.active .page-link {
+  background-color: var(--ri-blue) !important;
+  border-color: var(--ri-blue) !important;
+}
+
+.page-link {
+  color: var(--ri-blue) !important;
+}
+
+.page-link:hover {
+  color: var(--ri-blue-dark) !important;
+}
+
+/* ---- ALERTS ---- */
+.alert-info {
+  background: var(--ri-blue-light) !important;
+  border-color: var(--ri-blue) !important;
+  color: var(--ri-black) !important;
+}
+
+/* ---- TYPOGRAPHY ---- */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 700 !important;
+}
+
+a {
+  color: var(--ri-blue) !important;
+}
+
+a:hover {
+  color: var(--ri-blue-dark) !important;
+}
+
+/* Sidebar active pill override for AdminLTE */
+.sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-light-primary .nav-sidebar .nav-item.menu-open > .nav-link {
+  background-color: var(--ri-blue) !important;
+  color: #fff !important;
+}
+
+.sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active .nav-icon,
+.sidebar-light-primary .nav-sidebar .nav-item.menu-open > .nav-link .nav-icon {
+  color: #fff !important;
+}
+
+
+/* ===========================================
+   DARK MODE — [data-theme="dark"]
+   =========================================== */
+
+[data-theme="dark"] {
+  --ri-white:      #1A1D23;
+  --ri-light-gray: #13151A;
+  --ri-border:     #2A3040;
+  --ri-blue-light: #0D2030;
+  --ri-black:      #E8EAF0;
+  --ri-gray:       #9AA3B2;
+}
+
+/* Body & global */
+[data-theme="dark"] body {
+  background: #13151A !important;
+  color: #E8EAF0 !important;
+}
+
+/* Sidebar */
+[data-theme="dark"] .main-sidebar {
+  background: #1A1D23 !important;
+  border-right-color: #00ADEF !important;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.5) !important;
+}
+
+[data-theme="dark"] .brand-link {
+  background: #1A1D23 !important;
+  border-bottom-color: #2A3040 !important;
+}
+
+[data-theme="dark"] .brand-link:hover {
+  background: #0D2030 !important;
+}
+
+[data-theme="dark"] .nav-sidebar .nav-link {
+  color: #9AA3B2 !important;
+}
+
+[data-theme="dark"] .nav-sidebar .nav-link:hover {
+  background: #0D2030 !important;
+  color: #00ADEF !important;
+}
+
+[data-theme="dark"] .nav-sidebar .nav-link.active,
+[data-theme="dark"] .sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+  background: #00ADEF !important;
+  color: #fff !important;
+}
+
+[data-theme="dark"] .user-panel {
+  border-bottom-color: #2A3040 !important;
+}
+
+[data-theme="dark"] .user-panel .info a,
+[data-theme="dark"] .user-panel .info span:first-child {
+  color: #E8EAF0 !important;
+}
+
+/* Top navbar */
+[data-theme="dark"] .main-header.navbar {
+  background: #1A1D23 !important;
+  border-bottom-color: #00ADEF !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4) !important;
+}
+
+[data-theme="dark"] .main-header .nav-link {
+  color: #9AA3B2 !important;
+}
+
+/* Content */
+[data-theme="dark"] .content-wrapper {
+  background: #13151A !important;
+}
+
+[data-theme="dark"] .content-header h1 {
+  color: #E8EAF0 !important;
+}
+
+/* Cards */
+[data-theme="dark"] .card {
+  background: #1A1D23 !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.4) !important;
+  border: 1px solid #2A3040 !important;
+}
+
+[data-theme="dark"] .card-header {
+  background: #1A1D23 !important;
+  border-bottom-color: #2A3040 !important;
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .card-body {
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .card-outline.card-primary {
+  border-top: 3px solid #00ADEF !important;
+}
+
+/* Small stat boxes */
+[data-theme="dark"] .small-box {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+}
+
+/* Tables */
+[data-theme="dark"] .table {
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .table thead th {
+  background: #00ADEF !important;
+  color: #fff !important;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #0D2030 !important;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(even) {
+  background-color: #1A1D23 !important;
+}
+
+[data-theme="dark"] .table tbody tr:hover {
+  background: rgba(0, 173, 239, 0.1) !important;
+}
+
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th {
+  border-color: #2A3040 !important;
+}
+
+/* Forms */
+[data-theme="dark"] .form-control {
+  background: #252830 !important;
+  border-color: #2A3040 !important;
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .form-control:focus {
+  background: #252830 !important;
+  border-color: #00ADEF !important;
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: #5A6475 !important;
+}
+
+[data-theme="dark"] .input-group-text {
+  background: #0D2030 !important;
+  border-color: #2A3040 !important;
+  color: #00ADEF !important;
+}
+
+[data-theme="dark"] label,
+[data-theme="dark"] .col-form-label {
+  color: #9AA3B2 !important;
+}
+
+/* Select */
+[data-theme="dark"] select.form-control option {
+  background: #1A1D23;
+  color: #E8EAF0;
+}
+
+/* Footer */
+[data-theme="dark"] .main-footer {
+  background: #1A1D23 !important;
+  border-top-color: #2A3040 !important;
+  color: #9AA3B2 !important;
+}
+
+/* Breadcrumbs */
+[data-theme="dark"] .breadcrumb {
+  background: transparent !important;
+  color: #9AA3B2 !important;
+}
+
+[data-theme="dark"] .breadcrumb-item.active {
+  color: #9AA3B2 !important;
+}
+
+/* Alerts */
+[data-theme="dark"] .alert-info {
+  background: #0D2030 !important;
+  border-color: #00ADEF !important;
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .alert-success {
+  background: #0D2B1A !important;
+  border-color: #10b981 !important;
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .alert-danger {
+  background: #2B0D0D !important;
+  border-color: #ef4444 !important;
+  color: #E8EAF0 !important;
+}
+
+/* Pagination */
+[data-theme="dark"] .page-link {
+  background: #1A1D23 !important;
+  border-color: #2A3040 !important;
+  color: #00ADEF !important;
+}
+
+[data-theme="dark"] .page-item.active .page-link {
+  background: #00ADEF !important;
+  border-color: #00ADEF !important;
+  color: #fff !important;
+}
+
+[data-theme="dark"] .page-item.disabled .page-link {
+  background: #252830 !important;
+  border-color: #2A3040 !important;
+  color: #5A6475 !important;
+}
+
+/* Modal */
+[data-theme="dark"] .modal-content {
+  background: #1A1D23 !important;
+  border: 1px solid #2A3040 !important;
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .modal-header {
+  border-bottom-color: #2A3040 !important;
+}
+
+[data-theme="dark"] .modal-footer {
+  border-top-color: #2A3040 !important;
+}
+
+/* Dropdown */
+[data-theme="dark"] .dropdown-menu {
+  background: #1A1D23 !important;
+  border-color: #2A3040 !important;
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: #E8EAF0 !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+  background: #0D2030 !important;
+  color: #00ADEF !important;
+}
+
+/* Scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #13151A;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #2A3040;
+  border-radius: 3px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #00ADEF;
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+  background: none;
+  border: 1.5px solid #D9EEF8;
+  border-radius: 20px;
+  padding: 4px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4A4A4A;
+  transition: all 0.25s ease;
+  margin-right: 4px;
+}
+
+.dark-mode-toggle:hover {
+  border-color: #00ADEF;
+  color: #00ADEF;
+  background: rgba(0, 173, 239, 0.06);
+}
+
+[data-theme="dark"] .dark-mode-toggle {
+  border-color: #2A3040;
+  color: #9AA3B2;
+  background: #252830;
+}
+
+[data-theme="dark"] .dark-mode-toggle:hover {
+  border-color: #00ADEF;
+  color: #00ADEF;
+  background: #0D2030;
+}
+
+.dark-mode-toggle .toggle-icon {
+  font-size: 0.85rem;
+  transition: transform 0.3s ease;
+}
+
+.dark-mode-toggle:hover .toggle-icon {
+  transform: rotate(20deg);
+}
+
+/* Wrapper dark */
+[data-theme="dark"] .wrapper {
+  background: #13151A !important;
+}
+
+/* Text overrides */
+[data-theme="dark"] .text-muted {
+  color: #5A6475 !important;
+}
+
+[data-theme="dark"] p,
+[data-theme="dark"] span:not([style]),
+[data-theme="dark"] li {
+  color: inherit;
+}
+
+
+/* ===========================================
+   LOGO SWAP — light / dark
+   =========================================== */
+
+/* Light mode: show light logo, hide dark logo */
+.ri-logo-dark  { display: none !important; }
+.ri-logo-light { display: inline-block !important; }
+
+/* Dark mode: show dark logo, hide light logo */
+[data-theme="dark"] .ri-logo-dark  { display: inline-block !important; }
+[data-theme="dark"] .ri-logo-light { display: none !important; }
+
+/* Hero: logo on the gradient bg always uses the dark (white text) version */
+.ri-hero .ri-logo-light { display: none !important; }
+.ri-hero .ri-logo-dark  { display: inline-block !important; }
+
+/* Footer icon — also needs swap */
+.ri-footer-icon-light { display: inline-block; }
+.ri-footer-icon-dark  { display: none; }
+[data-theme="dark"] .ri-footer-icon-light { display: none; }
+[data-theme="dark"] .ri-footer-icon-dark  { display: inline-block; }

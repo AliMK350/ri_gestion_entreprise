@@ -102,12 +102,14 @@ body {
 .btn-primary {
     background-color: var(--upf-blue);
     border-color: var(--upf-blue);
+    color: #fff;
     transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
     background-color: #0f3668;
     border-color: #0f3668;
+    color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(19, 70, 133, 0.3);
 }
