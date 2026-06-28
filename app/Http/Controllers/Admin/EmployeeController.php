@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
 {
@@ -26,15 +27,45 @@ class EmployeeController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|email|unique:employees',
-            'phone'      => 'nullable|string|max:50',
-            'position'   => 'nullable|string|max:255',
-            'department' => 'nullable|string|max:255',
-            'hired_at'   => 'nullable|date',
-            'status'     => 'required|in:0,1',
-            'user_id'    => 'nullable|exists:users,id',
+            'name'              => 'required|string|max:255',
+            'email'             => 'required|email|unique:employees',
+            'phone'             => 'nullable|string|max:50',
+            'position'          => 'nullable|string|max:255',
+            'department'        => 'nullable|string|max:255',
+            'hired_at'          => 'nullable|date',
+            'status'            => 'required|in:0,1',
+            'user_id'           => 'nullable|exists:users,id',
+            'new_user_name'     => 'nullable|string|max:255',
+            'new_user_email' => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
+            'new_user_password' => 'nullable|string|min:7',
         ]);
+
+        if ($request->user_id && ($request->new_user_name || $request->new_user_email || $request->new_user_password)) {
+            return redirect()->back()
+                ->withErrors(['user_id' => 'Choisissez soit un compte existant, soit créez un nouveau compte, pas les deux.'])
+                ->withInput();
+        }
+
+        if ($request->user_id) {
+            $userId = $request->user_id;
+        } elseif (!empty($request->new_user_name) || !empty($request->new_user_email) || !empty($request->new_user_password)) {
+            $request->validate([
+                'new_user_name'     => 'required_with_all:new_user_email,new_user_password|string|max:255',
+                'new_user_email'    => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
+                'new_user_password' => 'required_with_all:new_user_name,new_user_email|string|min:7',
+            ]);
+
+            $user = new User;
+            $user->name = trim($request->new_user_name);
+            $user->email = trim($request->new_user_email);
+            $user->password = Hash::make($request->new_user_password);
+            $user->user_type = 3;
+            $user->save();
+
+            $userId = $user->id;
+        } else {
+            $userId = null;
+        }
 
         $employee             = new Employee;
         $employee->name       = trim($request->name);
@@ -44,7 +75,7 @@ class EmployeeController extends Controller
         $employee->department = trim($request->department);
         $employee->hired_at   = $request->hired_at;
         $employee->status     = intval($request->status);
-        $employee->user_id    = $request->user_id ?: null;
+        $employee->user_id    = $userId;
         $employee->save();
 
         return redirect('admin/employees/list')->with('success', 'Employé créé avec succès');
@@ -64,15 +95,45 @@ class EmployeeController extends Controller
     public function update($id, Request $request)
     {
         $request->validate([
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|email|unique:employees,email,' . $id,
-            'phone'      => 'nullable|string|max:50',
-            'position'   => 'nullable|string|max:255',
-            'department' => 'nullable|string|max:255',
-            'hired_at'   => 'nullable|date',
-            'status'     => 'required|in:0,1',
-            'user_id'    => 'nullable|exists:users,id',
+            'name'              => 'required|string|max:255',
+            'email'             => 'required|email|unique:employees,email,' . $id,
+            'phone'             => 'nullable|string|max:50',
+            'position'          => 'nullable|string|max:255',
+            'department'        => 'nullable|string|max:255',
+            'hired_at'          => 'nullable|date',
+            'status'            => 'required|in:0,1',
+            'user_id'           => 'nullable|exists:users,id',
+            'new_user_name'     => 'nullable|string|max:255',
+            'new_user_email' => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
+            'new_user_password' => 'nullable|string|min:7',
         ]);
+
+        if ($request->user_id && ($request->new_user_name || $request->new_user_email || $request->new_user_password)) {
+            return redirect()->back()
+                ->withErrors(['user_id' => 'Choisissez soit un compte existant, soit créez un nouveau compte, pas les deux.'])
+                ->withInput();
+        }
+
+        if ($request->user_id) {
+            $userId = $request->user_id;
+        } elseif (!empty($request->new_user_name) || !empty($request->new_user_email) || !empty($request->new_user_password)) {
+            $request->validate([
+                'new_user_name'     => 'required_with_all:new_user_email,new_user_password|string|max:255',
+                'new_user_email'    => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
+                'new_user_password' => 'required_with_all:new_user_name,new_user_email|string|min:7',
+            ]);
+
+            $user = new User;
+            $user->name = trim($request->new_user_name);
+            $user->email = trim($request->new_user_email);
+            $user->password = Hash::make($request->new_user_password);
+            $user->user_type = 3;
+            $user->save();
+
+            $userId = $user->id;
+        } else {
+            $userId = null;
+        }
 
         $employee = Employee::getSingle($id);
         if (empty($employee)) {
@@ -86,7 +147,7 @@ class EmployeeController extends Controller
         $employee->department = trim($request->department);
         $employee->hired_at   = $request->hired_at;
         $employee->status     = intval($request->status);
-        $employee->user_id    = $request->user_id ?: null;
+        $employee->user_id    = $userId;
         $employee->save();
 
         return redirect('admin/employees/list')->with('success', 'Employé mis à jour avec succès');
