@@ -4,8 +4,8 @@
         &nbsp;—&nbsp; Système de Gestion Entreprise
     </div>
     <div class="d-none d-sm-flex align-items-center" style="gap: 0.5rem;">
-        <img src="{{ url('/dist/img/ri-icon-transparent.png') }}" alt="Ri" class="ri-footer-icon-light" style="height: 22px; width: auto; opacity: 0.7;">
-        <img src="{{ url('/dist/img/ri-logo-dark.png') }}"        alt="Ri" class="ri-footer-icon-dark"  style="height: 22px; width: auto; opacity: 0.7;">
+        <img src="{{ asset('dist/img/ri-icon-transparent.png') }}" alt="Ri" class="ri-footer-icon-light" style="height: 22px; width: auto; opacity: 0.7;">
+        <img src="{{ asset('dist/img/ri-logo-dark.png') }}"        alt="Ri" class="ri-footer-icon-dark"  style="height: 22px; width: auto; opacity: 0.7;">
         <span style="font-size: 0.7rem; color: #aaa;">Impact &bull; Visibilité &bull; Performance</span>
     </div>
 </footer>

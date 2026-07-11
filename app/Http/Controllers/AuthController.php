@@ -38,7 +38,11 @@ class AuthController extends Controller
     {
         $remember = !empty($request->remember) ? true : false;
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
+        $user = User::where('email', $request->email)->where('is_delete', 0)->first();
+
+        if ($user && Hash::check($request->password, $user->password)) {
+            Auth::login($user, $remember);
+
             $userType = Auth::user()->user_type;
             if ($userType == 1) {
                 return redirect('admin/dashboard');

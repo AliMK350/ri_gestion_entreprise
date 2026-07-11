@@ -21,6 +21,7 @@ class AbsenceController extends Controller
         $employee = $this->getEmployee();
         $data['absences']     = $employee ? $employee->absences()->orderBy('date', 'desc')->get() : collect();
         $data['leaves']       = $employee ? $employee->leaves()->orderBy('start_date', 'desc')->get() : collect();
+        $data['employee']     = $employee;
         $data['header_title'] = 'Mes Absences & Congés';
         return view('employe.absences.index', $data);
     }

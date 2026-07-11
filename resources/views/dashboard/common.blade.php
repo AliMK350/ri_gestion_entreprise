@@ -24,7 +24,7 @@
                     </p>
                 </div>
                 <div class="col-lg-4 d-none d-lg-flex justify-content-end align-items-center">
-                    <img src="{{ url('/dist/img/ri-logo.png') }}" alt="Ri Communication" class="ri-hero-logo">
+                    <img src="{{ asset('dist/img/ri-logo.png') }}" alt="Ri Communication" class="ri-hero-logo">
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@
     <section class="content-header"><div class="container-fluid"><h1>Nouvelle Facture</h1></div></section>
     <section class="content"><div class="container-fluid"><div class="card card-primary"><form method="post">@csrf<div class="card-body">
         <div class="form-group"><label>Client *</label><select name="client_id" class="form-control" required>@foreach($clients as $c)<option value="{{ $c->id }}">{{ $c->name }}</option>@endforeach</select></div>
-        <div class="form-group"><label>Devis lié</label><select name="quote_id" class="form-control"><option value="">— Aucun —</option>@foreach($quotes as $q)<option value="{{ $q->id }}">#{{ $q->id }} — {{ $q->client->name ?? '' }} ({{ number_format($q->total_amount,2) }} €)</option>@endforeach</select></div>
+        <div class="form-group"><label>Devis lié</label><select name="quote_id" class="form-control"><option value="">— Aucun —</option>@foreach($quotes as $q)<option value="{{ $q->id }}">#{{ $q->id }} — {{ $q->client->name ?? '' }} ({{ number_format($q->total_amount,2) }} MAD)</option>@endforeach</select></div>
         <div class="form-group"><label>Référence *</label><input type="text" name="reference" class="form-control" required placeholder="FAC-2026-001"></div>
         <div class="form-group"><label>Montant *</label><input type="number" step="0.01" name="amount" class="form-control" required></div>
         <div class="form-group"><label>Date émission *</label><input type="date" name="issued_at" class="form-control" required></div>

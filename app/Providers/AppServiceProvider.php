@@ -10,8 +10,10 @@ use App\Models\Leave;
 use App\Models\Quote;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
+
+        if (! $this->app->runningInConsole() && request()->isSecure()) {
+            URL::forceScheme('https');
+        }
 
         View::composer('dashboard.common', function ($view) {
             $view->with('total_employees', Employee::where('status', 0)->count());

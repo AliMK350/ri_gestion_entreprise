@@ -2,7 +2,7 @@
 <h1>REÇU DE PAIEMENT #{{ $receipt->id }}</h1>
 <p><strong>Client:</strong> {{ $receipt->client->name ?? '' }}<br>
 <strong>Facture:</strong> {{ $receipt->invoice->reference ?? '' }}<br>
-<strong>Montant:</strong> {{ number_format($receipt->amount, 2) }} €<br>
+<strong>Montant:</strong> {{ number_format($receipt->amount, 2) }} MAD<br>
 <strong>Date:</strong> {{ $receipt->paid_at->format('d/m/Y') }}<br>
 <strong>Mode:</strong> {{ $receipt->payment_method ?? '-' }}</p>
 </body></html>

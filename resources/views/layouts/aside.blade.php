@@ -1,8 +1,8 @@
 <aside class="main-sidebar sidebar-light-primary elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link" style="display: flex; justify-content: center; align-items: center; padding: 1rem 0.75rem; border-bottom: 1px solid #D9EEF8; text-decoration: none;">
-        <img src="{{ url('/dist/img/ri-logo-transparent.png') }}" alt="Ri Communication" class="ri-logo-light" style="max-height:52px;width:auto;max-width:170px;object-fit:contain;">
-        <img src="{{ url('/dist/img/ri-logo-dark.png') }}" alt="Ri Communication" class="ri-logo-dark" style="max-height:52px;width:auto;max-width:170px;object-fit:contain;display:none;">
+        <img src="{{ asset('dist/img/ri-logo-transparent.png') }}" alt="Ri Communication" class="ri-logo-light" style="max-height:52px;width:auto;max-width:170px;object-fit:contain;">
+        <img src="{{ asset('dist/img/ri-logo-dark.png') }}" alt="Ri Communication" class="ri-logo-dark" style="max-height:52px;width:auto;max-width:170px;object-fit:contain;display:none;">
     </a>
 
     <!-- Sidebar -->

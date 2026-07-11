@@ -9,13 +9,13 @@
     <!-- Google Font: Montserrat -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ url('/plugins/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
     <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="{{ url('/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{ url('/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
     <!-- Ri Brand Theme -->
-    <link rel="stylesheet" href="{{ url('/css/theme.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
 
     <style>
         body.login-page {
@@ -30,7 +30,7 @@
             position: fixed;
             bottom: 0; left: 0;
             width: 100%; height: 52%;
-            background: url('{{ url('/dist/img/ri-bg.png') }}') center bottom / cover no-repeat;
+            background: url('{{ asset('dist/img/ri-bg.png') }}') center bottom / cover no-repeat;
             opacity: 0.30;
             z-index: 0;
             pointer-events: none;
@@ -117,8 +117,8 @@
         <div class="card login-card">
             <!-- Header with Logo -->
             <div class="login-card-header">
-                <img src="{{ url('/dist/img/ri-logo-transparent.png') }}" alt="Ri Communication" class="ri-logo-light">
-                <img src="{{ url('/dist/img/ri-logo-dark.png') }}" alt="Ri Communication" class="ri-logo-dark" style="display:none;">
+                <img src="{{ asset('dist/img/ri-logo-transparent.png') }}" alt="Ri Communication" class="ri-logo-light">
+                <img src="{{ asset('dist/img/ri-logo-dark.png') }}" alt="Ri Communication" class="ri-logo-dark" style="display:none;">
                 <div class="tagline">Impact &bull; Visibilité &bull; Performance</div>
             </div>
 
@@ -129,10 +129,10 @@
     </div>
 
     <!-- jQuery -->
-    <script src="{{ url('/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
-    <script src="{{ url('/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
-    <script src="{{ url('/dist/js/adminlte.min.js') }}"></script>
+    <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
 </body>
 </html>

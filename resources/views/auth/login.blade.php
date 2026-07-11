@@ -48,7 +48,7 @@
 
         @if (config('app.env') === 'local')
             <p class="mb-0 mt-3 text-muted small">
-                Demo: <strong>admin@example.com</strong> / <strong>password</strong>
+                Demo: <strong>alimejber055@gmail.com</strong> / <strong>password</strong>
             </p>
         @endif
 
