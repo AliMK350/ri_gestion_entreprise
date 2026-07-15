@@ -8,7 +8,7 @@ use Request;
 class Intern extends Model
 {
     protected $fillable = [
-        'name', 'email', 'phone', 'department', 'started_at', 'ended_at',
+        'name', 'email', 'phone', 'department', 'cv_path', 'started_at', 'ended_at',
     ];
 
     protected $casts = [

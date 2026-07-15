@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Intern;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class InternController extends Controller
 {
@@ -28,15 +29,22 @@ class InternController extends Controller
             'email'      => 'required|email|unique:interns',
             'phone'      => 'nullable|string|max:50',
             'department' => 'nullable|string|max:255',
+            'cv_file'    => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'started_at' => 'nullable|date',
             'ended_at'   => 'nullable|date|after_or_equal:started_at',
         ]);
+
+        $cvPath = null;
+        if ($request->hasFile('cv_file')) {
+            $cvPath = $request->file('cv_file')->store('cvs', 'public');
+        }
 
         $intern             = new Intern;
         $intern->name       = trim($request->name);
         $intern->email      = trim($request->email);
         $intern->phone      = trim($request->phone);
         $intern->department = trim($request->department);
+        $intern->cv_path    = $cvPath;
         $intern->started_at = $request->started_at;
         $intern->ended_at   = $request->ended_at;
         $intern->save();
@@ -61,6 +69,7 @@ class InternController extends Controller
             'email'      => 'required|email|unique:interns,email,' . $id,
             'phone'      => 'nullable|string|max:50',
             'department' => 'nullable|string|max:255',
+            'cv_file'    => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'started_at' => 'nullable|date',
             'ended_at'   => 'nullable|date|after_or_equal:started_at',
         ]);
@@ -68,6 +77,13 @@ class InternController extends Controller
         $intern = Intern::getSingle($id);
         if (empty($intern)) {
             abort(404);
+        }
+
+        if ($request->hasFile('cv_file')) {
+            if (!empty($intern->cv_path) && Storage::disk('public')->exists($intern->cv_path)) {
+                Storage::disk('public')->delete($intern->cv_path);
+            }
+            $intern->cv_path = $request->file('cv_file')->store('cvs', 'public');
         }
 
         $intern->name       = trim($request->name);

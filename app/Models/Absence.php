@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Absence extends Model
 {
     protected $fillable = [
-        'employee_id', 'date', 'reason',
+        'employee_id', 'date', 'half_day', 'reason', 'justification_file',
     ];
 
     protected $casts = [

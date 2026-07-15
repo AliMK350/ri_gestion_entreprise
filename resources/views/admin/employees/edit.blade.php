@@ -3,13 +3,15 @@
 <div class="content-wrapper">
     <section class="content-header"><div class="container-fluid"><h1>Modifier l'Employé</h1></div></section>
     <section class="content"><div class="container-fluid"><div class="card card-primary">
-        <form method="post">@csrf
+        <form method="post" enctype="multipart/form-data">@csrf
             <div class="card-body">
                 <div class="form-group"><label>Nom *</label><input type="text" name="name" class="form-control" required value="{{ old('name', $getRecord->name) }}"></div>
                 <div class="form-group"><label>Email *</label><input type="email" name="email" class="form-control" required value="{{ old('email', $getRecord->email) }}"></div>
                 <div class="form-group"><label>Téléphone</label><input type="text" name="phone" class="form-control" value="{{ old('phone', $getRecord->phone) }}"></div>
                 <div class="form-group"><label>Poste</label><input type="text" name="position" class="form-control" value="{{ old('position', $getRecord->position) }}"></div>
                 <div class="form-group"><label>Département</label><input type="text" name="department" class="form-control" value="{{ old('department', $getRecord->department) }}"></div>
+                <div class="form-group"><label>CV (PDF / Word)</label><input type="file" name="cv_file" class="form-control" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></div>
+                @if(!empty($getRecord->cv_path))<div class="form-group"><a href="{{ asset('storage/'.$getRecord->cv_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">Voir le CV actuel</a></div>@endif
                 <div class="form-group"><label>Date d'embauche</label><input type="date" name="hired_at" class="form-control" value="{{ old('hired_at', optional($getRecord->hired_at)->format('Y-m-d')) }}"></div>
                 <div class="form-group"><label>Statut *</label><select name="status" class="form-control"><option value="0" {{ old('status', $getRecord->status) == '0' ? 'selected' : '' }}>Actif</option><option value="1" {{ old('status', $getRecord->status) == '1' ? 'selected' : '' }}>Inactif</option></select></div>
                 <div class="form-group"><label>Compte utilisateur lié</label><select name="user_id" class="form-control"><option value="">— Aucun —</option>@foreach($users as $u)<option value="{{ $u->id }}" {{ old('user_id', $getRecord->user_id) == $u->id ? 'selected' : '' }}>{{ $u->name }} ({{ $u->email }})</option>@endforeach</select></div>

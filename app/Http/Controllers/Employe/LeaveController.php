@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class LeaveController extends Controller
 {
@@ -38,8 +39,9 @@ class LeaveController extends Controller
         $request->validate([
             'start_date' => 'required|date',
             'end_date'   => 'required|date|after_or_equal:start_date',
-            'type'       => 'required|in:vacation,sick,personal,other',
+            'type'       => 'required|in:vacation,sick,personal,other,death,marriage',
             'reason'     => 'nullable|string',
+            'justification_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
         ]);
 
         $startDate = Carbon::parse($request->start_date);
@@ -50,12 +52,18 @@ class LeaveController extends Controller
             return redirect()->back()->with('error', 'Solde de congé insuffisant pour cette période.');
         }
 
+        $filePath = null;
+        if ($request->hasFile('justification_file')) {
+            $filePath = $request->file('justification_file')->store('justifications', 'public');
+        }
+
         $leave = Leave::create([
             'employee_id' => $employee->id,
             'start_date'  => $request->start_date,
             'end_date'    => $request->end_date,
             'type'        => $request->type,
             'reason'      => $request->reason,
+            'justification_file' => $filePath,
             'status'      => 'pending',
         ]);
 

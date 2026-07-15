@@ -8,7 +8,7 @@ use Request;
 class Employee extends Model
 {
     protected $fillable = [
-        'user_id', 'name', 'email', 'phone', 'position', 'department', 'hired_at', 'status', 'leave_balance_days',
+        'user_id', 'name', 'email', 'phone', 'position', 'department', 'cv_path', 'hired_at', 'status', 'leave_balance_days',
     ];
 
     protected $casts = [

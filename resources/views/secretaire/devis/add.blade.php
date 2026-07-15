@@ -1,7 +1,14 @@
 @extends('layouts.app')
 @section('content')
 <div class="content-wrapper">
-    <section class="content-header"><div class="container-fluid"><h1>Nouveau Devis</h1></div></section>
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Nouveau Devis</h1>
+                <a href="{{ url('secretaire/clients/add') }}" class="btn btn-success">Créer un client</a>
+            </div>
+        </div>
+    </section>
     <section class="content"><div class="container-fluid"><div class="card card-primary"><form method="post">@csrf<div class="card-body">
         <div class="form-group"><label>Client *</label><select name="client_id" class="form-control" required>@foreach($clients as $c)<option value="{{ $c->id }}">{{ $c->name }}</option>@endforeach</select></div>
         <div class="form-group"><label>Montant total *</label><input type="number" step="0.01" name="total_amount" class="form-control" required></div>

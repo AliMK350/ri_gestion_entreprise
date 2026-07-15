@@ -9,7 +9,7 @@ use Request;
 class Leave extends Model
 {
     protected $fillable = [
-        'employee_id', 'start_date', 'end_date', 'type', 'status', 'reason',
+        'employee_id', 'start_date', 'end_date', 'type', 'status', 'reason', 'justification_file',
     ];
 
     protected $casts = [

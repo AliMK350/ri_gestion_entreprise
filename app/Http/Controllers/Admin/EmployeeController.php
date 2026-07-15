@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class EmployeeController extends Controller
 {
@@ -32,6 +33,7 @@ class EmployeeController extends Controller
             'phone'             => 'nullable|string|max:50',
             'position'          => 'nullable|string|max:255',
             'department'        => 'nullable|string|max:255',
+            'cv_file'           => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'hired_at'          => 'nullable|date',
             'status'            => 'required|in:0,1',
             'user_id'           => 'nullable|exists:users,id',
@@ -67,12 +69,18 @@ class EmployeeController extends Controller
             $userId = null;
         }
 
+        $cvPath = null;
+        if ($request->hasFile('cv_file')) {
+            $cvPath = $request->file('cv_file')->store('cvs', 'public');
+        }
+
         $employee             = new Employee;
         $employee->name       = trim($request->name);
         $employee->email      = trim($request->email);
         $employee->phone      = trim($request->phone);
         $employee->position   = trim($request->position);
         $employee->department = trim($request->department);
+        $employee->cv_path    = $cvPath;
         $employee->hired_at   = $request->hired_at;
         $employee->status     = intval($request->status);
         $employee->user_id    = $userId;
@@ -100,6 +108,7 @@ class EmployeeController extends Controller
             'phone'             => 'nullable|string|max:50',
             'position'          => 'nullable|string|max:255',
             'department'        => 'nullable|string|max:255',
+            'cv_file'           => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'hired_at'          => 'nullable|date',
             'status'            => 'required|in:0,1',
             'user_id'           => 'nullable|exists:users,id',
@@ -138,6 +147,13 @@ class EmployeeController extends Controller
         $employee = Employee::getSingle($id);
         if (empty($employee)) {
             abort(404);
+        }
+
+        if ($request->hasFile('cv_file')) {
+            if (!empty($employee->cv_path) && Storage::disk('public')->exists($employee->cv_path)) {
+                Storage::disk('public')->delete($employee->cv_path);
+            }
+            $employee->cv_path = $request->file('cv_file')->store('cvs', 'public');
         }
 
         $employee->name       = trim($request->name);

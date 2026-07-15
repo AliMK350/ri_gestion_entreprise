@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\Leave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AbsenceController extends Controller
 {
@@ -41,13 +42,22 @@ class AbsenceController extends Controller
 
         $request->validate([
             'date'   => 'required|date',
+            'half_day' => 'nullable|in:morning,afternoon',
             'reason' => 'nullable|string|max:255',
+            'justification_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
         ]);
+
+        $filePath = null;
+        if ($request->hasFile('justification_file')) {
+            $filePath = $request->file('justification_file')->store('justifications', 'public');
+        }
 
         Absence::create([
             'employee_id' => $employee->id,
             'date'        => $request->date,
+            'half_day'    => $request->half_day,
             'reason'      => $request->reason,
+            'justification_file' => $filePath,
         ]);
 
         return redirect('employe/absences')->with('success', 'Absence déclarée avec succès');
