@@ -20,7 +20,7 @@ class EmployeeController extends Controller
 
     public function add()
     {
-        $data['users']        = User::where('user_type', 3)->where('is_delete', 0)->orderBy('name')->get();
+        $data['users']        = User::where('user_type', '!=', 1)->where('is_delete', 0)->orderBy('name')->get();
         $data['header_title'] = 'Ajouter un Employé';
         return view('admin.employees.add', $data);
     }
@@ -38,8 +38,9 @@ class EmployeeController extends Controller
             'status'            => 'required|in:0,1',
             'user_id'           => 'nullable|exists:users,id',
             'new_user_name'     => 'nullable|string|max:255',
-            'new_user_email' => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
+            'new_user_email'    => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
             'new_user_password' => 'nullable|string|min:7',
+            'new_user_role'     => 'nullable|in:2,3,4',
         ]);
 
         if ($request->user_id && ($request->new_user_name || $request->new_user_email || $request->new_user_password)) {
@@ -55,13 +56,14 @@ class EmployeeController extends Controller
                 'new_user_name'     => 'required_with_all:new_user_email,new_user_password|string|max:255',
                 'new_user_email'    => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
                 'new_user_password' => 'required_with_all:new_user_name,new_user_email|string|min:7',
+                'new_user_role'     => 'required_with_all:new_user_name,new_user_email,new_user_password|in:2,3,4',
             ]);
 
             $user = new User;
             $user->name = trim($request->new_user_name);
             $user->email = trim($request->new_user_email);
             $user->password = Hash::make($request->new_user_password);
-            $user->user_type = 3;
+            $user->user_type = intval($request->new_user_role ?? 3);
             $user->save();
 
             $userId = $user->id;
@@ -95,7 +97,7 @@ class EmployeeController extends Controller
         if (empty($data['getRecord'])) {
             abort(404);
         }
-        $data['users']        = User::where('user_type', 3)->where('is_delete', 0)->orderBy('name')->get();
+        $data['users']        = User::where('user_type', '!=', 1)->where('is_delete', 0)->orderBy('name')->get();
         $data['header_title'] = 'Modifier l\'Employé';
         return view('admin.employees.edit', $data);
     }
@@ -113,8 +115,9 @@ class EmployeeController extends Controller
             'status'            => 'required|in:0,1',
             'user_id'           => 'nullable|exists:users,id',
             'new_user_name'     => 'nullable|string|max:255',
-            'new_user_email' => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
+            'new_user_email'    => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
             'new_user_password' => 'nullable|string|min:7',
+            'new_user_role'     => 'nullable|in:2,3,4',
         ]);
 
         if ($request->user_id && ($request->new_user_name || $request->new_user_email || $request->new_user_password)) {
@@ -136,7 +139,7 @@ class EmployeeController extends Controller
             $user->name = trim($request->new_user_name);
             $user->email = trim($request->new_user_email);
             $user->password = Hash::make($request->new_user_password);
-            $user->user_type = 3;
+            $user->user_type = intval($request->new_user_role ?? 3);
             $user->save();
 
             $userId = $user->id;

@@ -64,6 +64,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
         Route::get('/edit/{id}', [InternController::class, 'edit']);
         Route::post('/edit/{id}', [InternController::class, 'update']);
         Route::get('/delete/{id}', [InternController::class, 'delete']);
+        Route::get('/download-cv/{id}', [InternController::class, 'downloadCv']);
     });
 
     Route::group(['prefix' => 'absences'], function () {

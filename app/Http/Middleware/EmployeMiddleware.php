@@ -18,7 +18,7 @@ class EmployeMiddleware
     {
         if (!empty(Auth::check())) {
             $userType = Auth::user()->user_type;
-            if ($userType == 3) {
+            if ($userType == 3 || $userType == 1) {
                 return $next($request);
             } else {
                 Auth::logout();

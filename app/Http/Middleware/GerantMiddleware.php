@@ -18,7 +18,7 @@ class GerantMiddleware
     {
         if (!empty(Auth::check())) {
             $userType = Auth::user()->user_type;
-            if ($userType == 4) {
+            if ($userType == 4 || $userType == 1) {
                 return $next($request);
             } else {
                 Auth::logout();

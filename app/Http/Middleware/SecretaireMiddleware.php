@@ -18,7 +18,7 @@ class SecretaireMiddleware
     {
         if (!empty(Auth::check())) {
             $userType = Auth::user()->user_type;
-            if ($userType == 2) {
+            if ($userType == 2 || $userType == 1) {
                 return $next($request);
             } else {
                 Auth::logout();

@@ -19,7 +19,8 @@
                     <div class="form-group"><label>Nom du compte</label><input type="text" name="new_user_name" class="form-control" value="{{ old('new_user_name') }}"><div class="text-danger">{{ $errors->first('new_user_name') }}</div></div>
                     <div class="form-group"><label>Email du compte</label><input type="email" name="new_user_email" class="form-control" value="{{ old('new_user_email') }}"><div class="text-danger">{{ $errors->first('new_user_email') }}</div></div>
                     <div class="form-group"><label>Mot de passe</label><input type="password" name="new_user_password" class="form-control"><div class="text-danger">{{ $errors->first('new_user_password') }}</div></div>
-                    <small class="form-text text-muted">Remplissez ces champs pour créer automatiquement un compte utilisateur lié.</small>
+                    <div class="form-group"><label>Rôle du compte</label><select name="new_user_role" class="form-control"><option value="3" {{ old('new_user_role', 3) == '3' ? 'selected' : '' }}>Employé</option><option value="2" {{ old('new_user_role', 3) == '2' ? 'selected' : '' }}>Secrétaire</option><option value="4" {{ old('new_user_role', 3) == '4' ? 'selected' : '' }}>Gérant</option></select><div class="text-danger">{{ $errors->first('new_user_role') }}</div></div>
+                    <small class="form-text text-muted">Remplissez ces champs pour créer automatiquement un compte utilisateur lié avec le rôle choisi.</small>
                 </div>
             </div>
             <div class="card-footer"><button class="btn btn-primary">Enregistrer</button> <a href="{{ url('admin/employees/list') }}" class="btn btn-default">Annuler</a></div>

@@ -107,4 +107,21 @@ class InternController extends Controller
 
         return redirect('admin/interns/list')->with('success', 'Stagiaire supprimé avec succès');
     }
+
+    public function downloadCv($id)
+    {
+        $intern = Intern::getSingle($id);
+        if (empty($intern)) {
+            abort(404);
+        }
+
+        if (empty($intern->cv_path) || !Storage::disk('public')->exists($intern->cv_path)) {
+            return redirect('admin/interns/list')->with('error', 'Aucun CV disponible pour ce stagiaire.');
+        }
+
+        $extension = pathinfo($intern->cv_path, PATHINFO_EXTENSION);
+        $filename  = 'CV_' . str_replace(' ', '_', $intern->name) . '.' . $extension;
+
+        return Storage::disk('public')->download($intern->cv_path, $filename);
+    }
 }
