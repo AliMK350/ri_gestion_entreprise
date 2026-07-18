@@ -3,23 +3,19 @@
 namespace App\Http\Controllers\Employe;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\ManagesPersonnelAbsencesAndLeaves;
 use App\Mail\LeaveRequestedMail;
-use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class LeaveController extends Controller
 {
-    protected function getEmployee()
-    {
-        return Employee::forUser(Auth::id());
-    }
+    use ManagesPersonnelAbsencesAndLeaves;
 
     public function create()
     {
@@ -33,7 +29,7 @@ class LeaveController extends Controller
     {
         $employee = $this->getEmployee();
         if (!$employee) {
-            return redirect('employe/absences')->with('error', 'Aucun profil employé associé à votre compte.');
+            return redirect($this->personnelUrl('absences'))->with('error', 'Aucun profil employé associé à votre compte.');
         }
 
         $request->validate([
@@ -90,6 +86,6 @@ class LeaveController extends Controller
             ]);
         }
 
-        return redirect('employe/absences')->with('success', 'Demande de congé envoyée');
+        return redirect($this->personnelUrl('absences'))->with('success', 'Demande de congé envoyée');
     }
 }

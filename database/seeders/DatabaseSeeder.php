@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(userSeeder::class);
+        $this->call(JoursFeriesSeeder::class); // Jours fériés fixes marocains
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

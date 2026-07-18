@@ -3,19 +3,15 @@
 namespace App\Http\Controllers\Employe;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\ManagesPersonnelAbsencesAndLeaves;
 use App\Models\Absence;
-use App\Models\Employee;
 use App\Models\Leave;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class AbsenceController extends Controller
 {
-    protected function getEmployee()
-    {
-        return Employee::forUser(Auth::id());
-    }
+    use ManagesPersonnelAbsencesAndLeaves;
 
     public function index()
     {
@@ -37,7 +33,7 @@ class AbsenceController extends Controller
     {
         $employee = $this->getEmployee();
         if (!$employee) {
-            return redirect('employe/absences')->with('error', 'Aucun profil employé associé à votre compte.');
+            return redirect($this->personnelUrl('absences'))->with('error', 'Aucun profil employé associé à votre compte.');
         }
 
         $request->validate([
@@ -53,13 +49,68 @@ class AbsenceController extends Controller
         }
 
         Absence::create([
-            'employee_id' => $employee->id,
-            'date'        => $request->date,
-            'half_day'    => $request->half_day,
-            'reason'      => $request->reason,
+            'employee_id'        => $employee->id,
+            'declared_by'        => 'employee',
+            'date'               => $request->date,
+            'half_day'           => $request->half_day,
+            'reason'             => $request->reason,
             'justification_file' => $filePath,
         ]);
 
-        return redirect('employe/absences')->with('success', 'Absence déclarée avec succès');
+        return redirect($this->personnelUrl('absences'))->with('success', 'Absence déclarée avec succès');
+    }
+
+    public function edit($id)
+    {
+        $employee = $this->getEmployee();
+        if (!$employee) {
+            return redirect($this->personnelUrl('absences'))->with('error', 'Aucun profil employé associé à votre compte.');
+        }
+
+        $absence = Absence::where('id', $id)
+            ->where('employee_id', $employee->id)
+            ->where('declared_by', 'admin')
+            ->firstOrFail();
+
+        $data['absence']      = $absence;
+        $data['header_title'] = 'Justifier une absence';
+        return view('employe.absences.edit', $data);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $employee = $this->getEmployee();
+        if (!$employee) {
+            return redirect($this->personnelUrl('absences'))->with('error', 'Aucun profil employé associé à votre compte.');
+        }
+
+        $absence = Absence::where('id', $id)
+            ->where('employee_id', $employee->id)
+            ->where('declared_by', 'admin')
+            ->firstOrFail();
+
+        $rules = [
+            'reason' => 'required|string|max:255',
+        ];
+
+        if (empty($absence->justification_file)) {
+            $rules['justification_file'] = 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048';
+        } else {
+            $rules['justification_file'] = 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048';
+        }
+
+        $request->validate($rules);
+
+        if ($request->hasFile('justification_file')) {
+            if ($absence->justification_file) {
+                Storage::disk('public')->delete($absence->justification_file);
+            }
+            $absence->justification_file = $request->file('justification_file')->store('justifications', 'public');
+        }
+
+        $absence->reason = $request->reason;
+        $absence->save();
+
+        return redirect($this->personnelUrl('absences'))->with('success', 'Motif et justificatif enregistrés avec succès');
     }
 }

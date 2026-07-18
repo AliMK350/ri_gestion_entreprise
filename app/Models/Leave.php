@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\JourFerie;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Request;
@@ -22,15 +23,33 @@ class Leave extends Model
         return $this->belongsTo(Employee::class);
     }
 
+    /**
+     * Calcule le nombre de jours ouvrables entre deux dates.
+     *
+     * Sont exclus :
+     *  - les samedis et dimanches (week-end non travaillé)
+     *  - les jours fériés enregistrés dans la table jours_feries
+     *
+     * @param Carbon $startDate  Date de début (inclusive)
+     * @param Carbon $endDate    Date de fin   (inclusive)
+     * @return int               Nombre de jours ouvrables réels
+     */
     public function calculateWorkingDays(Carbon $startDate, Carbon $endDate): int
     {
+        // Récupère les dates fériées dans la plage en un seul appel BDD
+        $holidays = JourFerie::getHolidayDatesForRange($startDate, $endDate);
+
         $workingDays = 0;
         $date = $startDate->copy();
 
         while ($date->lte($endDate)) {
-            if ($date->dayOfWeek !== Carbon::SUNDAY) {
+            $isWeekend = in_array($date->dayOfWeek, [Carbon::SATURDAY, Carbon::SUNDAY]);
+            $isHoliday = in_array($date->toDateString(), $holidays);
+
+            if (!$isWeekend && !$isHoliday) {
                 $workingDays++;
             }
+
             $date->addDay();
         }
 

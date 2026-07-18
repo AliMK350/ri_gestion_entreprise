@@ -8,6 +8,7 @@ use App\Models\Intern;
 use App\Models\Invoice;
 use App\Models\Leave;
 use App\Models\Quote;
+use App\Support\PersonnelRoutes;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -38,6 +39,12 @@ class AppServiceProvider extends ServiceProvider
             $view->with('total_invoices',   Invoice::count());
             $view->with('pending_leaves',   Leave::where('status', 'pending')->count());
             $view->with('userType',         optional(Auth::user())->user_type);
+        });
+
+        View::composer('*', function ($view) {
+            if (Auth::check()) {
+                $view->with('personnelUrlPrefix', PersonnelRoutes::prefix());
+            }
         });
     }
 }

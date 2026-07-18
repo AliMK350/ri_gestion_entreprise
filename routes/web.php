@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AbsenceController as AdminAbsenceController;
 use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InternController;
+use App\Http\Controllers\Admin\JourFerieController;
 use App\Http\Controllers\Admin\LeaveController as AdminLeaveController;
 use App\Http\Controllers\Admin\PersonnelController as AdminPersonnelController;
 use App\Http\Controllers\AuthController;
@@ -65,6 +66,15 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
         Route::post('/edit/{id}', [InternController::class, 'update']);
         Route::get('/delete/{id}', [InternController::class, 'delete']);
         Route::get('/download-cv/{id}', [InternController::class, 'downloadCv']);
+    });
+
+    Route::group(['prefix' => 'jours-feries'], function () {
+        Route::get('/list', [JourFerieController::class, 'list']);
+        Route::get('/add', [JourFerieController::class, 'add']);
+        Route::post('/add', [JourFerieController::class, 'insert']);
+        Route::get('/edit/{id}', [JourFerieController::class, 'edit']);
+        Route::post('/edit/{id}', [JourFerieController::class, 'update']);
+        Route::get('/delete/{id}', [JourFerieController::class, 'delete']);
     });
 
     Route::group(['prefix' => 'absences'], function () {
@@ -132,6 +142,14 @@ Route::group(['middleware' => 'secretaire', 'prefix' => 'secretaire'], function 
         Route::get('/delete/{id}', [RecuController::class, 'delete']);
         Route::get('/pdf/{id}', [RecuController::class, 'pdf']);
     });
+
+    Route::get('/absences', [EmployeAbsenceController::class, 'index'])->name('secretaire.absences.index');
+    Route::get('/absences/create', [EmployeAbsenceController::class, 'create'])->name('secretaire.absences.create');
+    Route::post('/absences', [EmployeAbsenceController::class, 'store'])->name('secretaire.absences.store');
+    Route::get('/absences/{id}/edit', [EmployeAbsenceController::class, 'edit'])->name('secretaire.absences.edit');
+    Route::post('/absences/{id}/edit', [EmployeAbsenceController::class, 'update'])->name('secretaire.absences.update');
+    Route::get('/leaves/create', [EmployeLeaveController::class, 'create'])->name('secretaire.leaves.create');
+    Route::post('/leaves', [EmployeLeaveController::class, 'store'])->name('secretaire.leaves.store');
 });
 
 // Employé
@@ -143,6 +161,8 @@ Route::group(['middleware' => 'employe', 'prefix' => 'employe'], function () {
     Route::get('/absences', [EmployeAbsenceController::class, 'index'])->name('employe.absences.index');
     Route::get('/absences/create', [EmployeAbsenceController::class, 'create'])->name('employe.absences.create');
     Route::post('/absences', [EmployeAbsenceController::class, 'store'])->name('employe.absences.store');
+    Route::get('/absences/{id}/edit', [EmployeAbsenceController::class, 'edit'])->name('employe.absences.edit');
+    Route::post('/absences/{id}/edit', [EmployeAbsenceController::class, 'update'])->name('employe.absences.update');
 
     Route::get('/leaves/create', [EmployeLeaveController::class, 'create'])->name('employe.leaves.create');
     Route::post('/leaves', [EmployeLeaveController::class, 'store'])->name('employe.leaves.store');
@@ -173,4 +193,12 @@ Route::group(['middleware' => 'gerant', 'prefix' => 'gerant'], function () {
         Route::post('/validate/{id}', [GerantFactureController::class, 'validateInvoice']);
         Route::get('/delete/{id}', [GerantFactureController::class, 'delete']);
     });
+
+    Route::get('/absences', [EmployeAbsenceController::class, 'index'])->name('gerant.absences.index');
+    Route::get('/absences/create', [EmployeAbsenceController::class, 'create'])->name('gerant.absences.create');
+    Route::post('/absences', [EmployeAbsenceController::class, 'store'])->name('gerant.absences.store');
+    Route::get('/absences/{id}/edit', [EmployeAbsenceController::class, 'edit'])->name('gerant.absences.edit');
+    Route::post('/absences/{id}/edit', [EmployeAbsenceController::class, 'update'])->name('gerant.absences.update');
+    Route::get('/leaves/create', [EmployeLeaveController::class, 'create'])->name('gerant.leaves.create');
+    Route::post('/leaves', [EmployeLeaveController::class, 'store'])->name('gerant.leaves.store');
 });

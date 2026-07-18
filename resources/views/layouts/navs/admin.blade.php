@@ -42,6 +42,12 @@
     </a>
 </li>
 <li class="nav-item">
+    <a href="{{ url('admin/jours-feries/list') }}" class="nav-link @if (Request::segment(1) == 'admin' && Request::segment(2) == 'jours-feries') active @endif">
+        <i class="nav-icon fas fa-calendar-day"></i>
+        <p>Jours Fériés</p>
+    </a>
+</li>
+<li class="nav-item">
     <a href="{{ url('admin/personnel') }}" class="nav-link @if (Request::segment(1) == 'admin' && Request::segment(2) == 'personnel') active @endif">
         <i class="nav-icon fas fa-id-card"></i>
         <p>Consultation Personnel</p>

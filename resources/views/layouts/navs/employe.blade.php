@@ -17,7 +17,7 @@
     </a>
 </li>
 <li class="nav-item">
-    <a href="{{ url('employe/absences') }}" class="nav-link @if (Request::segment(2) == 'absences' || Request::segment(2) == 'leaves') active @endif">
+    <a href="{{ url($personnelUrlPrefix.'/absences') }}" class="nav-link @if (Request::segment(2) == 'absences' || Request::segment(2) == 'leaves') active @endif">
         <i class="nav-icon fas fa-calendar-times"></i>
         <p>Absences & Congés</p>
     </a>

@@ -24,8 +24,10 @@ class userSeeder extends Seeder
             User::updateOrCreate(['email' => $user['email']], $user);
         }
 
-        $admin   = User::where('email', 'admin@example.com')->first();
-        $employe = User::where('email', 'employe@example.com')->first();
+        $admin      = User::where('email', 'admin@example.com')->first();
+        $employe    = User::where('email', 'employe@example.com')->first();
+        $secretaire = User::where('email', 'secretaire@example.com')->first();
+        $gerant     = User::where('email', 'gerant@example.com')->first();
 
         Employee::updateOrCreate(
             ['email' => 'employe@example.com'],
@@ -37,6 +39,36 @@ class userSeeder extends Seeder
                 'department' => 'Production',
                 'hired_at'   => '2024-01-15',
                 'status'     => 0,
+            ]
+        );
+
+        // Profil Employee pour la secrétaire (20 jours de congé)
+        Employee::updateOrCreate(
+            ['email' => 'secretaire@example.com'],
+            [
+                'user_id'            => $secretaire->id,
+                'name'               => 'Jane Secrétaire',
+                'phone'              => '0600000010',
+                'position'           => 'Secrétaire',
+                'department'         => 'Administration',
+                'hired_at'           => '2024-03-01',
+                'status'             => 0,
+                'leave_balance_days' => 20,
+            ]
+        );
+
+        // Profil Employee pour le gérant (20 jours de congé)
+        Employee::updateOrCreate(
+            ['email' => 'gerant@example.com'],
+            [
+                'user_id'            => $gerant->id,
+                'name'               => 'Michael Gérant',
+                'phone'              => '0600000020',
+                'position'           => 'Gérant',
+                'department'         => 'Direction',
+                'hired_at'           => '2023-01-01',
+                'status'             => 0,
+                'leave_balance_days' => 20,
             ]
         );
 
