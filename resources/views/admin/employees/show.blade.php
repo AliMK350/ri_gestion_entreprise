@@ -16,6 +16,7 @@
             @forelse($getRecord->leaves as $l)<tr><td>{{ $l->start_date->format('d/m/Y') }} — {{ $l->end_date->format('d/m/Y') }}</td><td>{{ $l->type }}</td><td>{{ $l->status }}</td></tr>@empty<tr><td colspan="3">Aucun congé.</td></tr>@endforelse
             </tbody></table>
         </div></div>
+        <a href="{{ url('admin/attestations/travail/'.$getRecord->id) }}" target="_blank" class="btn btn-info"><i class="fas fa-print"></i> Imprimer l'attestation de travail</a>
         <a href="{{ url('admin/employees/list') }}" class="btn btn-default">Retour</a>
     </div></section>
 </div>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AbsenceController as AdminAbsenceController;
+use App\Http\Controllers\Admin\AttestationController;
 use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InternController;
@@ -66,6 +67,11 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
         Route::post('/edit/{id}', [InternController::class, 'update']);
         Route::get('/delete/{id}', [InternController::class, 'delete']);
         Route::get('/download-cv/{id}', [InternController::class, 'downloadCv']);
+    });
+
+    Route::group(['prefix' => 'attestations'], function () {
+        Route::get('/stage/{id}', [AttestationController::class, 'stage']);
+        Route::get('/travail/{id}', [AttestationController::class, 'travail']);
     });
 
     Route::group(['prefix' => 'jours-feries'], function () {

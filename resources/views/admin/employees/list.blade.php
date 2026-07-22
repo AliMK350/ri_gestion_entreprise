@@ -34,6 +34,7 @@
                                 <td>
                                     <a href="{{ url('admin/employees/show/'.$value->id) }}" class="btn btn-info btn-sm">Voir</a>
                                     <a href="{{ url('admin/employees/edit/'.$value->id) }}" class="btn btn-primary btn-sm">Éditer</a>
+                                    <a href="{{ url('admin/attestations/travail/'.$value->id) }}" target="_blank" class="btn btn-info btn-sm" title="Imprimer l'attestation de travail"><i class="fas fa-print"></i> Attestation</a>
                                     <a href="{{ url('admin/employees/delete/'.$value->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer ?')">Supprimer</a>
                                 </td>
                             </tr>
