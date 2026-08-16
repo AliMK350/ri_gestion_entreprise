@@ -18,7 +18,7 @@ class AdminMiddleware
     {
         if (!empty(Auth::check())) {
             $userType = Auth::user()->user_type;
-            if ($userType == 1) {
+            if ($userType == 1 || $userType == 4) {
                 return $next($request);
             } else {
                 Auth::logout();

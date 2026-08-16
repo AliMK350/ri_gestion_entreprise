@@ -11,29 +11,57 @@
             font-size: 13px;
             line-height: 1.7;
         }
-        .header {
-            position: fixed;
-            top: -70px;
+        .logo {
+            position: absolute;
             left: 0;
-            right: 0;
-            text-align: center;
-            border-bottom: 3px solid #00ADEF;
-            padding-bottom: 12px;
+            top: 0;
+            width: 60px;
+            height: 60px;
         }
-        .header .company-name {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            color: #222;
-        }
-        .header .company-name span { color: #00ADEF; }
-        .header .tagline {
-            font-size: 10px;
-            color: #888;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
+        .header {
+    position: fixed;
+    top: -70px;
+    left: 0;
+    right: 0;
+    height: 70px;
+    border-bottom: 3px solid #00ADEF;
+    padding-bottom: 12px;
+}
+
+.logo {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    width: 45px;
+    height: 45px;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.header .company-name {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #222;
+    text-align: center;
+}
+
+.header .company-name span {
+    color: #00ADEF;
+}
+
+.header .tagline {
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+    text-align: center;
+}
         .footer {
             position: fixed;
             bottom: -50px;
@@ -66,6 +94,9 @@
 </head>
 <body>
     <div class="header">
+        <div class="logo">
+    <img src="{{ public_path('dist/img/ri-logo-transparent.png') }}" alt="Logo">
+</div>
         <div class="company-name">RI <span>COMMUNICATION</span></div>
         <div class="tagline">Développement &amp; Solutions IT</div>
     </div>
@@ -105,8 +136,8 @@
     </div>
 
     <div class="signature">
-        <div class="place-date">Fait à Rabat, le {{ $today_fr }}</div>
-        <div>Le Directeur</div>
+        <div class="place-date">Fait à Fès, le {{ $today_fr }}</div>
+        <div>Mr Ismail Raiss El Fenni</div>
     </div>
 </body>
 </html>

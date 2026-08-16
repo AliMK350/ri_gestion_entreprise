@@ -50,6 +50,23 @@
                             <i class="fas fa-times"></i>
                         </a>
                     </div>
+                    <div class="col-md-5">
+                        {{-- Import CSV/XLSX --}}
+                        <form method="POST" action="{{ url('admin/jours-feries/import') }}" enctype="multipart/form-data" class="form-inline">
+                            @csrf
+                            <div class="form-group mr-2">
+                                <input type="file" name="file" accept=".csv,.xls,.xlsx" class="form-control form-control-sm">
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-success mr-2">Importer</button>
+                        </form>
+
+                        {{-- Delete non-fixed --}}
+                        <form method="POST" action="{{ url('admin/jours-feries/delete-non-fixed') }}" style="display:inline-block;">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer toutes les dates non fixes ? Cette action est irréversible.')">Supprimer non-fixes</button>
+                        </form>
+                        <small class="form-text text-muted">Format CSV attendu : <strong>nom,date,type,duree</strong></small>
+                    </div>
                 </div>
             </form>
 
@@ -64,6 +81,7 @@
                                 <th>Date</th>
                                 <th>Jour</th>
                                 <th>Type</th>
+                                <th>Durée</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -83,6 +101,7 @@
                                         <span class="badge badge-warning">Religieux</span>
                                     @endif
                                 </td>
+                                <td>{{ $v->duree ?? 1 }}j</td>
                                 <td>
                                     <a href="{{ url('admin/jours-feries/edit/'.$v->id) }}"
                                        class="btn btn-primary btn-sm">

@@ -7,7 +7,7 @@
         @forelse($getRecord as $v)<tr><td>{{ $v->name }}</td><td>{{ $v->company_name }}</td><td>{{ $v->email }}</td><td>
             <a href="{{ url('gerant/clients/history/'.$v->id) }}" class="btn btn-info btn-sm">Historique</a>
             <a href="{{ url('gerant/clients/edit/'.$v->id) }}" class="btn btn-primary btn-sm">Éditer</a>
-            <a href="{{ url('gerant/clients/delete/'.$v->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer ?')">Supprimer</a>
+            <a href="{{ url('gerant/clients/delete/'.$v->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous supprimer ce client ?')">Supprimer</a>
         </td></tr>@empty<tr><td colspan="4" class="text-center">Aucun client.</td></tr>@endforelse
         </tbody></table>{{ $getRecord->links() }}</div></div>
     </div></section>

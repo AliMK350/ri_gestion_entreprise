@@ -174,6 +174,10 @@ class EmployeeController extends Controller
 
     public function delete($id)
     {
+        if (auth()->user()->user_type == 4) {
+            return redirect('admin/employees/list')->with('error', 'Action non autorisée : Le Gérant ne peut pas supprimer un employé.');
+        }
+
         $employee = Employee::getSingle($id);
         if (empty($employee)) {
             abort(404);

@@ -9,10 +9,11 @@ class JourFerie extends Model
 {
     protected $table = 'jours_feries';
 
-    protected $fillable = ['nom', 'date', 'type'];
+    protected $fillable = ['nom', 'date', 'type', 'duree'];
 
     protected $casts = [
-        'date' => 'date',
+        'date'  => 'date',
+        'duree' => 'float',
     ];
 
     // ─── Scopes & Méthodes statiques ────────────────────────────────────────
@@ -47,13 +48,31 @@ class JourFerie extends Model
      */
     public static function getHolidayDatesForRange(Carbon $startDate, Carbon $endDate): array
     {
-        return self::whereBetween('date', [
-                $startDate->toDateString(),
-                $endDate->toDateString(),
-            ])
-            ->pluck('date')
-            ->map(fn($d) => Carbon::parse($d)->toDateString())
-            ->toArray();
+        $results = [];
+
+        // On récupère les jours dont la date de départ est au plus 30 jours
+        // avant la date de début de la recherche afin de couvrir les
+        // événements multi-jours qui commencent légèrement avant la plage.
+        $lookback = $startDate->copy()->subDays(30)->toDateString();
+
+        $holidays = self::where('date', '<=', $endDate->toDateString())
+            ->where('date', '>=', $lookback)
+            ->get(['date', 'duree']);
+
+        foreach ($holidays as $h) {
+            $base = Carbon::parse($h->date);
+            $duration = max(1, (int) round($h->duree ?? 1));
+
+            for ($i = 0; $i < $duration; $i++) {
+                $d = $base->copy()->addDays($i)->toDateString();
+                // Only include dates inside requested range
+                if ($d >= $startDate->toDateString() && $d <= $endDate->toDateString()) {
+                    $results[$d] = $d;
+                }
+            }
+        }
+
+        return array_values($results);
     }
 
     // ─── Accesseurs ─────────────────────────────────────────────────────────

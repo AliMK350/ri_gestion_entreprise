@@ -1,0 +1,658 @@
+/* ===========================================================
+   Ri Communication — UX ENHANCEMENTS LAYER
+   Ce fichier vient EN PLUS de theme.css (mêmes variables/couleurs).
+   Objectif : boutons plus lisibles, animations accueillantes,
+   tableaux/formulaires plus clairs, sans toucher la logique métier.
+   =========================================================== */
+
+/* ---------- Page entrance ---------- */
+@keyframes riFadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes riFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes riPop {
+  0%   { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.content-wrapper > .content-header,
+.content-wrapper > section.content,
+.content-wrapper > .content {
+  animation: riFadeInUp 0.45s cubic-bezier(.22,.61,.36,1) both;
+}
+
+.card, .ri-panel {
+  animation: riFadeInUp 0.4s cubic-bezier(.22,.61,.36,1) both;
+}
+
+/* Staggered rows (class + inline delay added by ri-ux.js) */
+.ri-stagger {
+  opacity: 0;
+  animation: riFadeInUp 0.35s cubic-bezier(.22,.61,.36,1) forwards;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em;
+  border-radius: 8px !important;
+  padding: 0.48rem 1.05rem !important;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.16s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease !important;
+  will-change: transform;
+}
+
+.btn i, .btn .fas, .btn .far, .btn .fab {
+  font-size: 0.85em;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn:focus, .btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 173, 239, 0.30) !important;
+}
+
+.btn-sm {
+  padding: 0.32rem 0.75rem !important;
+  font-size: 0.78rem !important;
+  border-radius: 6px !important;
+  gap: 0.32rem;
+}
+
+/* Primary — brand gradient */
+.btn-primary {
+  background: linear-gradient(135deg, var(--ri-blue), var(--ri-blue-dark)) !important;
+  border: none !important;
+  box-shadow: 0 3px 10px rgba(0, 173, 239, 0.28) !important;
+}
+.btn-primary:hover {
+  box-shadow: 0 6px 18px rgba(0, 173, 239, 0.4) !important;
+}
+
+/* Danger — soft red gradient */
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #d63333) !important;
+  border: none !important;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.25) !important;
+}
+.btn-danger:hover {
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.38) !important;
+}
+
+/* Success */
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #0d9668) !important;
+  border: none !important;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25) !important;
+}
+.btn-success:hover {
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Warning */
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d98307) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.25) !important;
+}
+
+/* Secondary / outline-style */
+.btn-secondary {
+  background: var(--ri-white) !important;
+  border: 1.5px solid var(--ri-border) !important;
+  color: var(--ri-gray) !important;
+  box-shadow: none !important;
+}
+.btn-secondary:hover {
+  border-color: var(--ri-blue) !important;
+  color: var(--ri-blue) !important;
+  background: var(--ri-blue-light) !important;
+}
+
+.btn:disabled, .btn.disabled {
+  opacity: 0.55 !important;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Ripple effect (span injected by JS on click) */
+.ri-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.55);
+  transform: scale(0);
+  animation: ri-ripple-anim 0.55s ease-out;
+  pointer-events: none;
+}
+@keyframes ri-ripple-anim {
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+/* Loading state for submit buttons */
+.btn.ri-loading {
+  color: transparent !important;
+  pointer-events: none;
+}
+.btn.ri-loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin: -8px 0 0 -8px;
+  border: 2.5px solid rgba(255,255,255,0.55);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ri-spin 0.65s linear infinite;
+}
+@keyframes ri-spin { to { transform: rotate(360deg); } }
+
+/* Icon-only buttons get a tooltip via title attr — subtle scale on hover */
+.btn-sm i:only-child {
+  font-size: 0.9em;
+}
+
+/* Action button group spacing in tables */
+td .btn + .btn { margin-left: 0.35rem; }
+
+/* ---------- FORMS ---------- */
+.form-group label {
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  color: var(--ri-gray) !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.form-control {
+  padding: 0.55rem 0.8rem !important;
+}
+
+.form-control:hover:not(:focus) {
+  border-color: #b9dff2 !important;
+}
+
+/* Required field marker convenience (no JS needed, opt-in via .required) */
+.form-group.required > label::after {
+  content: " *";
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* Card used as a "panel" header for search/filter forms */
+.card-header .card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ---------- TABLES ---------- */
+.table {
+  margin-bottom: 0 !important;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table tbody tr {
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+
+.table-hover tbody tr:hover,
+.table tbody tr:hover {
+  transform: translateX(2px);
+}
+
+.table td, .table th {
+  vertical-align: middle !important;
+}
+
+/* Empty state (JS adds .ri-empty-row + icon) */
+.ri-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2.5rem 1rem;
+  color: var(--ri-gray);
+  animation: riFadeIn 0.4s ease both;
+}
+
+.ri-empty-state i {
+  font-size: 2.1rem;
+  color: var(--ri-border);
+}
+
+.ri-empty-state span {
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .ri-empty-state i {
+  color: #2A3040;
+}
+
+/* ---------- BADGES ---------- */
+.badge {
+  border-radius: 20px !important;
+  padding: 0.35em 0.75em !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- TOASTS (flash messages) ---------- */
+.ri-toast-container {
+  position: fixed;
+  top: 78px;
+  right: 20px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 380px;
+  width: calc(100% - 40px);
+}
+
+.ri-toast {
+  background: var(--ri-white);
+  border-left: 4px solid var(--ri-blue);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.84rem;
+  color: var(--ri-black);
+  animation: riToastIn 0.4s cubic-bezier(.22,.61,.36,1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.ri-toast.ri-toast-out {
+  animation: riToastOut 0.35s ease forwards;
+}
+
+@keyframes riToastIn {
+  from { opacity: 0; transform: translateX(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes riToastOut {
+  to { opacity: 0; transform: translateX(30px) scale(0.95); }
+}
+
+.ri-toast-icon { font-size: 1.05rem; margin-top: 1px; }
+.ri-toast-body { flex: 1; line-height: 1.4; }
+.ri-toast-body ul { margin: 0; padding-left: 1.1rem; }
+.ri-toast-close {
+  cursor: pointer;
+  color: #b7bfca;
+  font-size: 0.85rem;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+.ri-toast-close:hover { color: var(--ri-black); }
+
+.ri-toast-progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: var(--ri-blue);
+  animation: riToastProgress 5s linear forwards;
+}
+@keyframes riToastProgress { from { width: 100%; } to { width: 0%; } }
+
+.ri-toast-success { border-left-color: #10b981; }
+.ri-toast-success .ri-toast-icon { color: #10b981; }
+.ri-toast-success .ri-toast-progress { background: #10b981; }
+
+.ri-toast-danger { border-left-color: #ef4444; }
+.ri-toast-danger .ri-toast-icon { color: #ef4444; }
+.ri-toast-danger .ri-toast-progress { background: #ef4444; }
+
+.ri-toast-warning { border-left-color: #f59e0b; }
+.ri-toast-warning .ri-toast-icon { color: #f59e0b; }
+.ri-toast-warning .ri-toast-progress { background: #f59e0b; }
+
+.ri-toast-info { border-left-color: var(--ri-blue); }
+.ri-toast-info .ri-toast-icon { color: var(--ri-blue); }
+
+[data-theme="dark"] .ri-toast {
+  background: #1A1D23;
+  color: #E8EAF0;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+}
+
+/* Hide the original inline alerts once converted to toasts, keep space collapsed */
+.ri-toast-source { display: none !important; }
+
+/* ---------- CONFIRM MODAL ---------- */
+.ri-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17,17,17,0.45);
+  backdrop-filter: blur(2px);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.ri-modal-overlay.ri-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.ri-modal-box {
+  background: var(--ri-white);
+  border-radius: 14px;
+  max-width: 380px;
+  width: 90%;
+  padding: 1.6rem 1.5rem 1.3rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 0.22s cubic-bezier(.22,.61,.36,1);
+}
+.ri-modal-overlay.ri-open .ri-modal-box {
+  transform: scale(1);
+  animation: riPop 0.25s cubic-bezier(.22,.61,.36,1) both;
+}
+
+[data-theme="dark"] .ri-modal-box {
+  background: #1A1D23;
+  color: #E8EAF0;
+}
+
+.ri-modal-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #FEECEC;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin: 0 auto 0.9rem;
+}
+[data-theme="dark"] .ri-modal-icon {
+  background: #2B0D0D;
+}
+
+.ri-modal-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.02rem;
+  margin-bottom: 0.4rem;
+}
+
+.ri-modal-text {
+  font-size: 0.85rem;
+  color: var(--ri-gray);
+  margin-bottom: 1.3rem;
+}
+
+.ri-modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.ri-modal-actions .btn {
+  flex: 1;
+  max-width: 140px;
+}
+
+/* ---------- Sidebar nav micro-interaction ---------- */
+.nav-sidebar .nav-link {
+  position: relative;
+}
+
+.nav-sidebar .nav-link .nav-icon {
+  transition: transform 0.2s ease;
+}
+
+.nav-sidebar .nav-link:hover .nav-icon {
+  transform: translateX(2px) scale(1.08);
+}
+
+/* ---------- Missing / off-brand button variants ----------
+   AdminLTE/Bootstrap leave these essentially unstyled or in
+   generic Bootstrap blue/teal, which clashed with the brand
+   palette and, for .btn-default, had NO background or border
+   at all (just grey text) — effectively invisible as a button. */
+
+.btn-default {
+  background: var(--ri-white) !important;
+  border: 1.5px solid var(--ri-border) !important;
+  color: var(--ri-gray) !important;
+  box-shadow: none !important;
+}
+.btn-default:hover {
+  background: var(--ri-blue-light) !important;
+  border-color: var(--ri-blue) !important;
+  color: var(--ri-blue-dark) !important;
+}
+
+.btn-outline-primary {
+  background: transparent !important;
+  border: 1.5px solid var(--ri-blue) !important;
+  color: var(--ri-blue) !important;
+  box-shadow: none !important;
+}
+.btn-outline-primary:hover {
+  background: var(--ri-blue) !important;
+  color: #fff !important;
+}
+
+.btn-outline-secondary {
+  background: transparent !important;
+  border: 1.5px solid var(--ri-border) !important;
+  color: var(--ri-gray) !important;
+  box-shadow: none !important;
+}
+.btn-outline-secondary:hover {
+  background: var(--ri-light-gray) !important;
+  border-color: var(--ri-gray) !important;
+  color: var(--ri-black) !important;
+}
+
+.btn-outline-danger {
+  background: transparent !important;
+  border: 1.5px solid #ef4444 !important;
+  color: #ef4444 !important;
+  box-shadow: none !important;
+}
+.btn-outline-danger:hover {
+  background: #ef4444 !important;
+  color: #fff !important;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, var(--ri-blue), var(--ri-blue-dark)) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 3px 10px rgba(0, 173, 239, 0.22) !important;
+}
+.btn-info:hover {
+  box-shadow: 0 6px 16px rgba(0, 173, 239, 0.32) !important;
+}
+
+[data-theme="dark"] .btn-default {
+  background: #252830 !important;
+  border-color: #2A3040 !important;
+  color: #9AA3B2 !important;
+}
+[data-theme="dark"] .btn-default:hover {
+  background: #0D2030 !important;
+  border-color: #00ADEF !important;
+  color: #33C5F5 !important;
+}
+[data-theme="dark"] .btn-outline-primary {
+  color: #33C5F5 !important;
+  border-color: #00ADEF !important;
+}
+[data-theme="dark"] .btn-outline-primary:hover {
+  background: #00ADEF !important;
+  color: #0B0D10 !important;
+}
+[data-theme="dark"] .btn-outline-secondary {
+  border-color: #2A3040 !important;
+  color: #9AA3B2 !important;
+}
+[data-theme="dark"] .btn-outline-secondary:hover {
+  background: #252830 !important;
+  color: #E8EAF0 !important;
+}
+
+/* ---------- Consistent spacing between buttons, everywhere ---------- */
+.btn + .btn,
+.btn + a.btn,
+a.btn + .btn {
+  margin-left: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .btn + .btn { margin-left: 0; margin-top: 0.4rem; }
+}
+
+/* Card footers are used exclusively as form action bars in this app —
+   give them clear alignment instead of relying on inline whitespace. */
+.card-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0.9rem 1.25rem !important;
+}
+.card-footer .btn + .btn { margin-left: 0; }
+
+/* ---------- Compact, intuitive table row actions ----------
+   Long "Éditer" / "Supprimer" buttons with icon+text were
+   cramped and wrapped inside narrow Actions columns. JS adds
+   .ri-icon-btn + data-tooltip for a clean icon-only pill with
+   a lightweight custom tooltip on hover. */
+td.ri-actions-cell,
+.table td:has(.ri-icon-btn) {
+  white-space: nowrap;
+}
+
+.ri-icon-btn {
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border-radius: 8px !important;
+  font-size: 0.85rem;
+  flex: 0 0 auto;
+}
+
+.ri-icon-btn .ri-btn-label {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Custom tooltip bubble */
+.ri-icon-btn[data-tooltip] {
+  position: relative;
+}
+.ri-icon-btn[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--ri-black);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 20;
+}
+.ri-icon-btn[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+[data-theme="dark"] .ri-icon-btn[data-tooltip]::after {
+  background: #E8EAF0;
+  color: #13151A;
+}
+
+/* Row action group wrapper */
+.ri-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+}
+.ri-actions-group .btn + .btn { margin-left: 0 !important; }
+
+/* Forms wrapping a single action button (e.g. Approuver/Refuser) are
+   moved as a whole into .ri-actions-group by ri-ux.js so the submit
+   button stays a descendant of its form; display:contents makes the
+   form itself invisible to layout so it still looks like a flat
+   row of icon buttons. */
+.ri-actions-group form.ri-inline-form {
+  display: contents;
+}
+
+/* ---------- Search / filter bars ---------- */
+.card-body form .row {
+  align-items: flex-end;
+}
+.card-body form .form-group:has(> .btn) {
+  margin-bottom: 1rem;
+}
+.small-box, .ri-stat-card {
+  cursor: default;
+}
+
+/* Scroll-to-top affordance for long tables (optional utility class) */
+.ri-scroll-shadow {
+  box-shadow: inset 0 6px 8px -8px rgba(0,0,0,0.15);
+}

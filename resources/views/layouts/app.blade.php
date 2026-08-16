@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
     <!-- Ri Brand Theme -->
     <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
+    <!-- Ri UX Enhancements (buttons, animations, toasts, modal) -->
+    <link rel="stylesheet" href="{{ asset('css/theme-ux.css') }}">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Daterange picker -->
@@ -99,6 +101,9 @@
     <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
     @yield('scripts')
     @stack('dashboard_scripts')
+
+    <!-- Ri UX Enhancements: icônes auto, animations, modal de confirmation, toasts -->
+    <script src="{{ asset('js/ri-ux.js') }}"></script>
 
     <!-- Dark Mode Script -->
     <script>

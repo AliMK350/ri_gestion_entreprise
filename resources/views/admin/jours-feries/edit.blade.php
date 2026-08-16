@@ -68,6 +68,21 @@
                                     </small>
                                 </div>
 
+                                {{-- Durée (optionnelle) --}}
+                                <div class="form-group">
+                                    <label for="duree">Durée (en jours) <small class="text-muted">(optionnel)</small></label>
+                                    <input type="number"
+                                           step="0.5"
+                                           min="1"
+                                           id="duree"
+                                           name="duree"
+                                           class="form-control @error('duree') is-invalid @enderror"
+                                           value="{{ old('duree', $getRecord->duree ?? 1) }}">
+                                    @error('duree')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary">

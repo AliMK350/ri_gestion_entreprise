@@ -1,0 +1,82 @@
+@extends('layouts.app')
+@section('content')
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <h1 class="m-0 text-dark"><i class="fas fa-file-invoice text-primary mr-2"></i>Validation des Devis</h1>
+                    <small class="text-muted">Consultez, validez ou supprimez les devis</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            @include('_message')
+            <div class="card card-outline card-primary shadow-sm">
+                <div class="card-body p-0 table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>N° Devis</th>
+                                <th>Date</th>
+                                <th>Client</th>
+                                <th class="text-right">Montant HT</th>
+                                <th class="text-right">Total TTC</th>
+                                <th class="text-center">Statut</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($getRecord as $q)
+                                <tr>
+                                    <td class="font-weight-bold text-primary">{{ $q->reference ?? ('DEV-'.$q->id) }}</td>
+                                    <td>{{ $q->quote_date ? date('d/m/Y', strtotime($q->quote_date)) : $q->created_at->format('d/m/Y') }}</td>
+                                    <td>
+                                        <strong>{{ $q->client->name ?? '-' }}</strong>
+                                        @if(!empty($q->client->company_name))
+                                            <br><small class="text-muted">{{ $q->client->company_name }}</small>
+                                        @endif
+                                    </td>
+                                    <td class="text-right">{{ number_format($q->total_ht ?? $q->total_amount, 2, ',', ' ') }} DH</td>
+                                    <td class="text-right font-weight-bold text-success">{{ number_format($q->total_ttc ?? $q->total_amount, 2, ',', ' ') }} DH</td>
+                                    <td class="text-center">
+                                        @if($q->status == 'accepted')
+                                            <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Accepté</span>
+                                        @elseif($q->status == 'sent')
+                                            <span class="badge badge-info px-2 py-1"><i class="fas fa-paper-plane mr-1"></i>Envoyé</span>
+                                        @elseif($q->status == 'rejected')
+                                            <span class="badge badge-danger px-2 py-1"><i class="fas fa-times-circle mr-1"></i>Refusé</span>
+                                        @else
+                                            <span class="badge badge-secondary px-2 py-1"><i class="fas fa-pencil-alt mr-1"></i>Brouillon</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a href="{{ url('admin/devis/show/'.$q->id) }}" class="btn btn-sm btn-outline-secondary" title="Consulter le devis"><i class="fas fa-eye"></i></a>
+                                            @if(in_array($q->status, ['draft','sent']))
+                                            <form method="post" action="{{ url('admin/devis/validate/'.$q->id) }}" class="d-inline">@csrf<input type="hidden" name="status" value="accepted"><button class="btn btn-sm btn-outline-success" title="Valider"><i class="fas fa-check"></i></button></form>
+                                            <form method="post" action="{{ url('admin/devis/validate/'.$q->id) }}" class="d-inline">@csrf<input type="hidden" name="status" value="rejected"><button class="btn btn-sm btn-outline-warning" title="Refuser"><i class="fas fa-ban"></i></button></form>
+                                            @endif
+                                            <a href="{{ url('admin/devis/delete/'.$q->id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Voulez-vous vraiment supprimer ce devis ?')" title="Supprimer"><i class="fas fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="fas fa-folder-open fa-2x mb-2 d-block text-secondary"></i>
+                                        Aucun devis enregistré pour le moment.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@endsection

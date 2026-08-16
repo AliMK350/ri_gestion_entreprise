@@ -1,32 +1,58 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Attestation de travail - {{ $employee->name }}</title>
+
     <style>
         @page { margin: 90px 70px 70px 70px; }
+
         body {
             font-family: 'Helvetica', 'DejaVu Sans', sans-serif;
             color: #222;
             font-size: 13px;
             line-height: 1.7;
         }
+
         .header {
             position: fixed;
             top: -70px;
             left: 0;
             right: 0;
-            text-align: center;
+            height: 70px;
             border-bottom: 3px solid #00ADEF;
             padding-bottom: 12px;
         }
+
+        .logo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 60px;
+            height: 60px;
+        }
+
+        .logo img {
+            width: 60px;
+            height: auto;
+        }
+
+        .header-content {
+            text-align: center;
+        }
+
         .header .company-name {
             font-size: 22px;
             font-weight: bold;
             letter-spacing: 3px;
             color: #222;
         }
-        .header .company-name span { color: #00ADEF; }
+
+        .header .company-name span {
+            color: #00ADEF;
+        }
+
         .header .tagline {
             font-size: 10px;
             color: #888;
@@ -34,6 +60,7 @@
             text-transform: uppercase;
             margin-top: 2px;
         }
+
         .footer {
             position: fixed;
             bottom: -50px;
@@ -45,6 +72,7 @@
             border-top: 1px solid #ddd;
             padding-top: 8px;
         }
+
         h1 {
             text-align: center;
             font-size: 20px;
@@ -54,20 +82,48 @@
             margin-top: 40px;
             margin-bottom: 45px;
         }
-        .content { text-align: justify; }
-        .content p { margin-bottom: 18px; }
-        .highlight { font-weight: bold; }
+
+        .content {
+            text-align: justify;
+        }
+
+        .content p {
+            margin-bottom: 18px;
+        }
+
+        .highlight {
+            font-weight: bold;
+        }
+
         .signature {
             margin-top: 70px;
             text-align: right;
         }
-        .signature .place-date { margin-bottom: 60px; }
+
+        .signature .place-date {
+            margin-bottom: 60px;
+        }
     </style>
 </head>
+
 <body>
+
     <div class="header">
-        <div class="company-name">RI <span>COMMUNICATION</span></div>
-        <div class="tagline">Développement &amp; Solutions IT</div>
+
+        <!-- ====== LOGO ====== -->
+        <div class="logo">
+            <img src="{{ public_path('dist\img\ri-logo-transparent.png') }}" alt="Logo">
+        </div>
+
+        <div class="header-content">
+            <div class="company-name">
+                RI <span>COMMUNICATION</span>
+            </div>
+            <div class="tagline">
+                Développement &amp; Solutions IT
+            </div>
+        </div>
+
     </div>
 
     <div class="footer">
@@ -78,17 +134,25 @@
 
     <div class="content">
         <p>
-            Nous soussignés, la société <span class="highlight">RI COMMUNICATION</span>, certifions par la présente
-            que <span class="highlight">{{ $employee->name }}</span> est employé(e) au sein de notre société
+            Nous soussignés, la société <span class="highlight">RI COMMUNICATION</span>,
+            certifions par la présente que
+            <span class="highlight">{{ $employee->name }}</span>
+            est employé(e) au sein de notre société
+
             @if($employee->position)
                 en qualité de <span class="highlight">{{ $employee->position }}</span>
             @endif
+
             @if($employee->department)
-                , au sein du département <span class="highlight">{{ $employee->department }}</span>
+                , au sein du département
+                <span class="highlight">{{ $employee->department }}</span>
             @endif
+
             @if($hired_at_fr)
-                , depuis le <span class="highlight">{{ $hired_at_fr }}</span>
+                , depuis le
+                <span class="highlight">{{ $hired_at_fr }}</span>
             @endif
+
             @if($employee->status == 0)
                 , et ce à ce jour.
             @else
@@ -102,8 +166,14 @@
     </div>
 
     <div class="signature">
-        <div class="place-date">Fait à Rabat, le {{ $today_fr }}</div>
-        <div>Le Directeur</div>
+        <div class="place-date">
+            Fait à Fès, le {{ $today_fr }}
+        </div>
+
+        <div>
+            Mr Ismail Raiss El Fenni
+        </div>
     </div>
+
 </body>
 </html>

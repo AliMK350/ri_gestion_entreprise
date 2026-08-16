@@ -10,7 +10,7 @@
                         <h1>Gestion des Clients</h1>
                     </div>
                     <div class="col-sm-6">
-                        @if(Auth::user()->user_type == 1)
+                        @if(in_array(Auth::user()->user_type, [1, 4]))
                         <div class="float-sm-right">
                             <a href="{{ url('admin/clients/add') }}" class="btn btn-primary"> Ajouter un nouveau Client</a>
                         </div>
@@ -76,7 +76,7 @@
                                             <th>Statut</th>
                                             <th>Créé par</th>
                                             <th>Date de création</th>
-                                            @if(Auth::user()->user_type == 1)
+                                            @if(in_array(Auth::user()->user_type, [1, 4]))
                                             <th>Actions</th>
                                             @endif
                                         </tr>
@@ -100,7 +100,7 @@
                                                 </td>
                                                 <td>{{ $value->creator_name ?? 'Inconnu' }}</td>
                                                 <td>{{ date('d/m/Y | H:i A', strtotime($value->created_at)) }}</td>
-                                                @if(Auth::user()->user_type == 1)
+                                                @if(in_array(Auth::user()->user_type, [1, 4]))
                                                 <td>
                                                     <a href="{{ url('admin/clients/edit/' . $value->id) }}"
                                                         class="btn btn-primary btn-sm"> Éditer</a>

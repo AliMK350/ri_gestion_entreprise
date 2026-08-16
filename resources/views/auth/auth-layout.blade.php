@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
     <!-- Ri Brand Theme -->
     <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
+    <!-- Ri UX Enhancements -->
+    <link rel="stylesheet" href="{{ asset('css/theme-ux.css') }}">
 
     <style>
         body.login-page {
@@ -134,5 +136,6 @@
     <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+    <script src="{{ asset('js/ri-ux.js') }}"></script>
 </body>
 </html>

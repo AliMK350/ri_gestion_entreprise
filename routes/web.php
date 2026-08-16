@@ -81,6 +81,8 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
         Route::get('/edit/{id}', [JourFerieController::class, 'edit']);
         Route::post('/edit/{id}', [JourFerieController::class, 'update']);
         Route::get('/delete/{id}', [JourFerieController::class, 'delete']);
+        Route::post('/import', [JourFerieController::class, 'import']);
+        Route::post('/delete-non-fixed', [JourFerieController::class, 'deleteNonFixed']);
     });
 
     Route::group(['prefix' => 'absences'], function () {
@@ -105,6 +107,20 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
         Route::get('/edit/{id}', [AdminClientController::class, 'edit']);
         Route::post('/edit/{id}', [AdminClientController::class, 'update']);
         Route::get('/delete/{id}', [AdminClientController::class, 'delete']);
+    });
+
+    Route::group(['prefix' => 'devis'], function () {
+        Route::get('/list', [GerantDevisController::class, 'list']);
+        Route::get('/show/{id}', [GerantDevisController::class, 'show']);
+        Route::post('/validate/{id}', [GerantDevisController::class, 'validateQuote']);
+        Route::get('/delete/{id}', [GerantDevisController::class, 'delete']);
+    });
+
+    Route::group(['prefix' => 'factures'], function () {
+        Route::get('/list', [GerantFactureController::class, 'list']);
+        Route::get('/show/{id}', [GerantFactureController::class, 'show']);
+        Route::post('/validate/{id}', [GerantFactureController::class, 'validateInvoice']);
+        Route::get('/delete/{id}', [GerantFactureController::class, 'delete']);
     });
 });
 
@@ -190,12 +206,14 @@ Route::group(['middleware' => 'gerant', 'prefix' => 'gerant'], function () {
 
     Route::group(['prefix' => 'devis'], function () {
         Route::get('/list', [GerantDevisController::class, 'list']);
+        Route::get('/show/{id}', [GerantDevisController::class, 'show']);
         Route::post('/validate/{id}', [GerantDevisController::class, 'validateQuote']);
         Route::get('/delete/{id}', [GerantDevisController::class, 'delete']);
     });
 
     Route::group(['prefix' => 'factures'], function () {
         Route::get('/list', [GerantFactureController::class, 'list']);
+        Route::get('/show/{id}', [GerantFactureController::class, 'show']);
         Route::post('/validate/{id}', [GerantFactureController::class, 'validateInvoice']);
         Route::get('/delete/{id}', [GerantFactureController::class, 'delete']);
     });
