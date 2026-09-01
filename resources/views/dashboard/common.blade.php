@@ -124,7 +124,7 @@
                 @endif
 
                 @if($userType == 3)
-                <div class="col-lg-3 col-sm-6 col-12 mb-4">
+                <div class="col-lg-4 col-sm-6 col-12 mb-4">
                     <div class="ri-stat-card ri-stat-blue">
                         <div class="ri-stat-icon"><i class="fas fa-calendar-times"></i></div>
                         <div class="ri-stat-body">
@@ -134,12 +134,22 @@
                         <a href="{{ url('employe/absences') }}" class="ri-stat-link">Voir <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-sm-6 col-12 mb-4">
+                <div class="col-lg-4 col-sm-6 col-12 mb-4">
                     <div class="ri-stat-card ri-stat-orange">
                         <div class="ri-stat-icon"><i class="fas fa-clock"></i></div>
                         <div class="ri-stat-body">
                             <div class="ri-stat-value">{{ $pending_leaves ?? 0 }}</div>
                             <div class="ri-stat-label">Congés en attente</div>
+                        </div>
+                        <a href="{{ url('employe/leaves/create') }}" class="ri-stat-link">Demander <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-6 col-12 mb-4">
+                    <div class="ri-stat-card ri-stat-teal">
+                        <div class="ri-stat-icon"><i class="fas fa-umbrella-beach"></i></div>
+                        <div class="ri-stat-body">
+                            <div class="ri-stat-value">{{ $leave_balance_days ?? 0 }} <span style="font-size: 1.1rem; font-weight: 600;">j</span></div>
+                            <div class="ri-stat-label">Solde de congé restant</div>
                         </div>
                         <a href="{{ url('employe/leaves/create') }}" class="ri-stat-link">Demander <i class="fas fa-arrow-right"></i></a>
                     </div>
@@ -191,6 +201,10 @@
                             <div class="ri-info-row">
                                 <span class="ri-info-key"><i class="fas fa-umbrella-beach ri-info-ico"></i> Mes congés</span>
                                 <span class="ri-info-val ri-info-num">{{ $my_leaves ?? 0 }}</span>
+                            </div>
+                            <div class="ri-info-row">
+                                <span class="ri-info-key"><i class="fas fa-hourglass-half ri-info-ico"></i> Solde restant</span>
+                                <span class="ri-info-val ri-info-num">{{ $leave_balance_days ?? 0 }} j</span>
                             </div>
                             @endif
                             <div class="ri-info-row ri-info-date">

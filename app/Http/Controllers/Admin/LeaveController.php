@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\LeaveDecisionMail;
 use App\Models\Leave;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -21,7 +22,7 @@ class LeaveController extends Controller
     public function updateStatus($id, Request $request)
     {
         $request->validate([
-            'status' => 'required|in:pending,approved,rejected',
+            'status' => 'required|in:pending,approved,rejected,cancelled',
         ]);
 
         $leave = Leave::findOrFail($id);
@@ -37,22 +38,48 @@ class LeaveController extends Controller
             $employee->save();
         }
 
+        if ($leave->status === 'approved' && $request->status === 'cancelled') {
+            $leaveModel = new Leave();
+            $employee->leave_balance_days = (int) $employee->leave_balance_days + $leaveModel->calculateWorkingDays($leave->start_date, $leave->end_date);
+            $employee->save();
+        }
+
         $leave->status = $request->status;
         $leave->save();
 
         try {
-            $recipientEmail = null;
+            $recipientEmails = [];
 
             if ($employee && $employee->user && !str_ends_with($employee->user->email, '@example.com')) {
-                $recipientEmail = $employee->user->email;
+                $recipientEmails[] = $employee->user->email;
             } elseif ($employee && !str_ends_with($employee->email, '@example.com')) {
-                $recipientEmail = $employee->email;
+                $recipientEmails[] = $employee->email;
             } elseif (!empty(env('LEAVE_EMPLOYEE_NOTIFICATION_EMAIL'))) {
-                $recipientEmail = env('LEAVE_EMPLOYEE_NOTIFICATION_EMAIL');
+                $recipientEmails[] = env('LEAVE_EMPLOYEE_NOTIFICATION_EMAIL');
             }
 
-            if (!empty($recipientEmail)) {
-                Mail::to($recipientEmail)->send(new LeaveDecisionMail($leave, $request->status));
+            if ($request->status === 'cancelled') {
+                $adminEmails = User::where('user_type', 1)
+                    ->where('is_delete', 0)
+                    ->whereNotNull('email')
+                    ->pluck('email');
+
+                $configuredAdminEmail = env('LEAVE_ADMIN_NOTIFICATION_EMAIL');
+                $recipientEmails = array_values(array_unique(array_merge(
+                    $recipientEmails,
+                    array_filter([
+                        $configuredAdminEmail,
+                        ...$adminEmails->all(),
+                    ], fn ($email) => !empty($email) && !str_ends_with($email, '@example.com'))
+                )));
+            }
+
+            $recipientEmails = array_values(array_unique(array_filter($recipientEmails, fn ($email) => !empty($email))));
+
+            if (!empty($recipientEmails)) {
+                foreach ($recipientEmails as $recipientEmail) {
+                    Mail::to($recipientEmail)->send(new LeaveDecisionMail($leave, $request->status));
+                }
             }
         } catch (\Throwable $e) {
             Log::warning('Échec d\'envoi du mail de décision de congé.', [

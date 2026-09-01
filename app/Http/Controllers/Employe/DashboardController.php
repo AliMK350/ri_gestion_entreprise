@@ -16,11 +16,12 @@ class DashboardController extends Controller
         $employee = Employee::forUser($user->id);
 
         $data = [
-            'header_title'    => 'Espace Employé',
-            'userType'        => $user->user_type,
-            'my_absences'     => $employee ? $employee->absences()->count() : 0,
-            'my_leaves'       => $employee ? $employee->leaves()->count() : 0,
-            'pending_leaves'  => $employee ? $employee->leaves()->where('status', 'pending')->count() : 0,
+            'header_title'       => 'Espace Employé',
+            'userType'           => $user->user_type,
+            'my_absences'        => $employee ? $employee->absences()->count() : 0,
+            'my_leaves'          => $employee ? $employee->leaves()->count() : 0,
+            'pending_leaves'     => $employee ? $employee->leaves()->where('status', 'pending')->count() : 0,
+            'leave_balance_days' => $employee ? ($employee->leave_balance_days ?? 0) : 0,
         ];
 
         return view('employe.dashboard', $data);

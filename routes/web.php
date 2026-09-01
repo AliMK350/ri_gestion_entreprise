@@ -188,6 +188,7 @@ Route::group(['middleware' => 'employe', 'prefix' => 'employe'], function () {
 
     Route::get('/leaves/create', [EmployeLeaveController::class, 'create'])->name('employe.leaves.create');
     Route::post('/leaves', [EmployeLeaveController::class, 'store'])->name('employe.leaves.store');
+    Route::post('/leaves/cancel/{id}', [EmployeLeaveController::class, 'cancel'])->name('employe.leaves.cancel');
 });
 
 // Gérant

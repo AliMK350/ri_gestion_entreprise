@@ -24,8 +24,15 @@ class LeaveDecisionMail extends Mailable
 
     public function envelope(): Envelope
     {
+        $subject = match ($this->status) {
+            'approved' => 'Votre congé a été approuvé',
+            'rejected' => 'Votre congé a été refusé',
+            'cancelled' => 'Votre congé a été annulé',
+            default => 'Mise à jour de votre congé',
+        };
+
         return new Envelope(
-            subject: $this->status === 'approved' ? 'Votre congé a été approuvé' : 'Votre congé a été refusé',
+            subject: $subject,
         );
     }
 

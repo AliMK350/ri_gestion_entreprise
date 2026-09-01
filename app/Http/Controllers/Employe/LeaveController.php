@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employe;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\ManagesPersonnelAbsencesAndLeaves;
+use App\Mail\LeaveDecisionMail;
 use App\Mail\LeaveRequestedMail;
 use App\Models\Leave;
 use App\Models\User;
@@ -87,5 +88,59 @@ class LeaveController extends Controller
         }
 
         return redirect($this->personnelUrl('absences'))->with('success', 'Demande de congé envoyée');
+    }
+
+    public function cancel($id)
+    {
+        $employee = $this->getEmployee();
+
+        if (!$employee) {
+            return redirect($this->personnelUrl('absences'))->with('error', 'Aucun profil employé associé à votre compte.');
+        }
+
+        $leave = Leave::where('id', $id)->where('employee_id', $employee->id)->firstOrFail();
+
+        if ($leave->status !== 'approved') {
+            return redirect($this->personnelUrl('absences'))->with('error', 'Seuls les congés approuvés peuvent être annulés.');
+        }
+
+        $startDate = Carbon::parse($leave->start_date);
+        $today = Carbon::today();
+
+        if ($startDate->lte($today)) {
+            return redirect($this->personnelUrl('absences'))->with('error', 'Vous ne pouvez annuler un congé qu\'avant son début.');
+        }
+
+        $daysToRefund = (new Leave())->calculateWorkingDays($startDate, $leave->end_date);
+        $employee->leave_balance_days = (int) $employee->leave_balance_days + $daysToRefund;
+        $employee->save();
+
+        $leave->status = 'cancelled';
+        $leave->save();
+
+        $adminEmails = User::where('user_type', 1)
+            ->where('is_delete', 0)
+            ->whereNotNull('email')
+            ->pluck('email');
+
+        $configuredAdminEmail = env('LEAVE_ADMIN_NOTIFICATION_EMAIL');
+        $recipientEmails = array_values(array_unique(array_filter([
+            $employee->user?->email,
+            $employee->email,
+            $configuredAdminEmail,
+            ...$adminEmails->all(),
+        ], fn ($email) => !empty($email) && !str_ends_with($email, '@example.com'))));
+
+        try {
+            foreach ($recipientEmails as $recipientEmail) {
+                Mail::to($recipientEmail)->send(new LeaveDecisionMail($leave, 'cancelled'));
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Échec d\'envoi du mail d\'annulation de congé.', [
+                'exception' => $e->getMessage(),
+            ]);
+        }
+
+        return redirect($this->personnelUrl('absences'))->with('success', 'Congé annulé avec remboursement des jours non commencés.');
     }
 }

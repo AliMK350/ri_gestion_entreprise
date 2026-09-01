@@ -73,4 +73,121 @@ class LeaveMailNotificationTest extends TestCase
             return $mail->hasTo($employeeUser->email) || $mail->hasTo('alimejber055@gmail.com');
         });
     }
+
+    public function test_approved_leave_cancellation_restores_balance_and_notifies_employee_and_admin(): void
+    {
+        Mail::fake();
+
+        $admin = User::factory()->create([
+            'email' => 'alimejber055@gmail.com',
+            'password' => 'password',
+            'user_type' => 1,
+            'is_delete' => 0,
+        ]);
+
+        $employeeUser = User::factory()->create([
+            'email' => 'employee-cancel@company.com',
+            'password' => 'password',
+            'user_type' => 2,
+            'is_delete' => 0,
+        ]);
+
+        $employee = Employee::create([
+            'user_id' => $employeeUser->id,
+            'name' => 'Test Employee Cancel',
+            'email' => 'employee-profile-cancel@company.com',
+            'phone' => '0123456789',
+            'position' => 'Developer',
+            'department' => 'IT',
+            'hired_at' => '2024-01-01',
+            'status' => 0,
+            'leave_balance_days' => 20,
+        ]);
+
+        $leave = Leave::create([
+            'employee_id' => $employee->id,
+            'start_date' => '2026-07-20',
+            'end_date' => '2026-07-24',
+            'type' => 'vacation',
+            'status' => 'approved',
+            'reason' => 'Holiday',
+        ]);
+
+        $employee->refresh();
+        $employee->leave_balance_days = 15;
+        $employee->save();
+
+        $adminController = new AdminLeaveController();
+        $adminController->updateStatus($leave->id, new Request(['status' => 'cancelled']));
+
+        $employee->refresh();
+        $this->assertSame(20, (int) $employee->leave_balance_days);
+
+        Mail::assertSent(LeaveDecisionMail::class, function ($mail) use ($employeeUser) {
+            return $mail->hasTo($employeeUser->email);
+        });
+
+        Mail::assertSent(LeaveDecisionMail::class, function ($mail) use ($admin) {
+            return $mail->hasTo($admin->email);
+        });
+    }
+
+    public function test_employee_can_cancel_approved_leave_before_start_and_recover_balance(): void
+    {
+        Mail::fake();
+
+        $admin = User::factory()->create([
+            'email' => 'admin-cancel-employee@example.com',
+            'password' => 'password',
+            'user_type' => 1,
+            'is_delete' => 0,
+        ]);
+
+        $employeeUser = User::factory()->create([
+            'email' => 'employee-self-cancel@company.com',
+            'password' => 'password',
+            'user_type' => 2,
+            'is_delete' => 0,
+        ]);
+
+        $employee = Employee::create([
+            'user_id' => $employeeUser->id,
+            'name' => 'Self Cancel Employee',
+            'email' => 'employee-self-cancel-profile@company.com',
+            'phone' => '0123456789',
+            'position' => 'Developer',
+            'department' => 'IT',
+            'hired_at' => '2024-01-01',
+            'status' => 0,
+            'leave_balance_days' => 20,
+        ]);
+
+        $leave = Leave::create([
+            'employee_id' => $employee->id,
+            'start_date' => '2026-12-10',
+            'end_date' => '2026-12-12',
+            'type' => 'vacation',
+            'status' => 'approved',
+            'reason' => 'Holiday',
+        ]);
+
+        $employee->leave_balance_days = 15;
+        $employee->save();
+
+        $this->actingAs($employeeUser);
+
+        $controller = new EmployeLeaveController();
+        $response = $controller->cancel($leave->id);
+
+        $leave->refresh();
+        $employee->refresh();
+
+        $this->assertSame('cancelled', $leave->status);
+        $this->assertSame(17, (int) $employee->leave_balance_days);
+        $this->assertNotNull($response);
+
+        Mail::assertSent(LeaveDecisionMail::class, function ($mail) use ($employeeUser, $admin) {
+            return $mail->hasTo($employeeUser->email) || $mail->hasTo($admin->email);
+        });
+    }
 }

@@ -8,11 +8,13 @@
             <td>{{ $l->employee->name ?? '-' }}</td>
             <td>{{ $l->start_date->format('d/m/Y') }} — {{ $l->end_date->format('d/m/Y') }}</td>
             <td>{{ $l->type }}</td>
-            <td><span class="badge badge-{{ $l->status == 'approved' ? 'success' : ($l->status == 'rejected' ? 'danger' : 'warning') }}">{{ $l->status }}</span></td>
+            <td><span class="badge badge-{{ $l->status == 'approved' ? 'success' : ($l->status == 'rejected' ? 'danger' : ($l->status == 'cancelled' ? 'secondary' : 'warning')) }}">{{ $l->status }}</span></td>
             <td>
                 @if($l->status == 'pending')
                 <form method="post" action="{{ url('admin/leaves/status/'.$l->id) }}" class="d-inline">@csrf<input type="hidden" name="status" value="approved"><button class="btn btn-success btn-sm">Approuver</button></form>
                 <form method="post" action="{{ url('admin/leaves/status/'.$l->id) }}" class="d-inline">@csrf<input type="hidden" name="status" value="rejected"><button class="btn btn-warning btn-sm">Refuser</button></form>
+                @elseif($l->status == 'approved')
+                <form method="post" action="{{ url('admin/leaves/status/'.$l->id) }}" class="d-inline">@csrf<input type="hidden" name="status" value="cancelled"><button class="btn btn-secondary btn-sm">Annuler</button></form>
                 @endif
                 <a href="{{ url('admin/leaves/delete/'.$l->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer ?')">Supprimer</a>
             </td>
