@@ -41,6 +41,13 @@ class LeaveController extends Controller
             'justification_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
         ]);
 
+        $hasJustification = $request->hasFile('justification_file');
+        if (!$employee->canRequestLeaveType($request->type, $hasJustification, $request->reason)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'En tant qu\'employé de moins de 6 mois d\'ancienneté, vous n\'êtes pas autorisé à demander un congé normal (congé payé). Seuls les cas spéciaux (décès, mariage, maladie, ou cas exceptionnel avec justificatif) sont autorisés.');
+        }
+
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
         $leaveModel = new Leave();

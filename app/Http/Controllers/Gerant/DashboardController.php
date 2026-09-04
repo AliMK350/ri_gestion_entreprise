@@ -19,7 +19,7 @@ class DashboardController extends Controller
             'header_title'    => 'Espace Gérant',
             'userType'        => $user->user_type,
             'total_clients'   => Client::where('is_delete', 0)->count(),
-            'total_employees' => Employee::where('status', 0)->count(),
+            'total_employees' => Employee::count(),
             'total_quotes'    => Quote::count(),
             'total_invoices'  => Invoice::count(),
             'pending_quotes'  => Quote::whereIn('status', ['draft', 'sent'])->count(),

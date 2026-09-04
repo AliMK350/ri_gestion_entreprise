@@ -30,7 +30,6 @@ class ClientController extends Controller
             'company_name' => 'nullable|string|max:255',
             'phone'        => 'nullable|string|max:50',
             'address'      => 'nullable|string',
-            'status'       => 'required',
         ]);
 
         $client               = new Client;
@@ -39,7 +38,6 @@ class ClientController extends Controller
         $client->company_name = trim($request->company_name);
         $client->phone        = trim($request->phone);
         $client->address      = trim($request->address);
-        $client->status       = intval($request->status);
         $client->created_by   = Auth::user()->id;
         $client->save();
 
@@ -64,7 +62,6 @@ class ClientController extends Controller
             'company_name' => 'nullable|string|max:255',
             'phone'        => 'nullable|string|max:50',
             'address'      => 'nullable|string',
-            'status'       => 'required',
         ]);
 
         $client = Client::where('id', $id)->where('is_delete', 0)->first();
@@ -77,7 +74,6 @@ class ClientController extends Controller
         $client->company_name = trim($request->company_name);
         $client->phone        = trim($request->phone);
         $client->address      = trim($request->address);
-        $client->status       = intval($request->status);
         $client->save();
 
         return redirect('secretaire/clients/list')->with('success', 'Client mis à jour.');

@@ -23,14 +23,13 @@
             <div class="card">
                 <div class="card-body p-0">
                     <table class="table table-striped">
-                        <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Téléphone</th><th>Poste</th><th>Département</th><th>Statut</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Téléphone</th><th>Poste</th><th>Département</th><th>Actions</th></tr></thead>
                         <tbody>
                         @forelse($getRecord as $i => $value)
                             <tr>
                                 <td>{{ $getRecord->firstItem() + $i }}</td>
                                 <td>{{ $value->name }}</td><td>{{ $value->email }}</td><td>{{ $value->phone }}</td>
                                 <td>{{ $value->position }}</td><td>{{ $value->department }}</td>
-                                <td><span class="badge badge-{{ $value->status == 0 ? 'success' : 'danger' }}">{{ $value->status == 0 ? 'Actif' : 'Inactif' }}</span></td>
                                 <td>
                                     <a href="{{ url('admin/employees/show/'.$value->id) }}" class="btn btn-info btn-sm">Voir</a>
                                     <a href="{{ url('admin/employees/edit/'.$value->id) }}" class="btn btn-primary btn-sm">Éditer</a>
@@ -41,7 +40,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="8" class="text-center">Aucun employé.</td></tr>
+                            <tr><td colspan="7" class="text-center">Aucun employé.</td></tr>
                         @endforelse
                         </tbody>
                     </table>

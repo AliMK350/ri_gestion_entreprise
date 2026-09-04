@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $data = [
             'header_title'    => 'Tableau de bord',
             'userType'        => $user->user_type,
-            'total_employees' => Employee::where('status', 0)->count(),
+            'total_employees' => Employee::count(),
             'total_interns'   => Intern::count(),
             'total_clients'   => Client::where('is_delete', 0)->count(),
             'total_quotes'    => Quote::count(),

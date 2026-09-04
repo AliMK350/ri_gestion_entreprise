@@ -35,7 +35,6 @@ class EmployeeController extends Controller
             'department'        => 'nullable|string|max:255',
             'cv_file'           => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'hired_at'          => 'nullable|date',
-            'status'            => 'required|in:0,1',
             'user_id'           => 'nullable|exists:users,id',
             'new_user_name'     => 'nullable|string|max:255',
             'new_user_email'    => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
@@ -84,8 +83,8 @@ class EmployeeController extends Controller
         $employee->department = trim($request->department);
         $employee->cv_path    = $cvPath;
         $employee->hired_at   = $request->hired_at;
-        $employee->status     = intval($request->status);
         $employee->user_id    = $userId;
+        $employee->leave_balance_days = $employee->calculateAccruedBalanceFromHiredAt();
         $employee->save();
 
         return redirect('admin/employees/list')->with('success', 'Employé créé avec succès');
@@ -112,7 +111,6 @@ class EmployeeController extends Controller
             'department'        => 'nullable|string|max:255',
             'cv_file'           => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'hired_at'          => 'nullable|date',
-            'status'            => 'required|in:0,1',
             'user_id'           => 'nullable|exists:users,id',
             'new_user_name'     => 'nullable|string|max:255',
             'new_user_email'    => 'required_with_all:new_user_name,new_user_password|email|unique:users,email',
@@ -165,7 +163,6 @@ class EmployeeController extends Controller
         $employee->position   = trim($request->position);
         $employee->department = trim($request->department);
         $employee->hired_at   = $request->hired_at;
-        $employee->status     = intval($request->status);
         $employee->user_id    = $userId;
         $employee->save();
 

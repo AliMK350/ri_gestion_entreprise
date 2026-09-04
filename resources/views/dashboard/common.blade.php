@@ -27,9 +27,41 @@
                     <img src="{{ asset('dist/img/ri-logo.png') }}" alt="Ri Communication" class="ri-hero-logo">
                 </div>
             </div>
+    </div>
+
+    {{-- ============================================================
+         BANNIÈRE D'ANCIENNETÉ (Pour les employés)
+    ============================================================ --}}
+    @if($userType == 3)
+    <div class="container-fluid pt-3 px-4">
+        <div class="ri-seniority-banner @if($has_min_seniority ?? false) ri-seniority-eligible @else ri-seniority-restricted @endif">
+            <div class="ri-seniority-icon">
+                <i class="fas @if($has_min_seniority ?? false) fa-award @else fa-user-clock @endif"></i>
+            </div>
+            <div class="ri-seniority-content">
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                    <h5 class="ri-seniority-title mb-0">Ancienneté : <strong>{{ $seniority_formatted ?? 'Moins d\'un mois' }}</strong></h5>
+                    @if($has_min_seniority ?? false)
+                        <span class="badge badge-success px-3 py-1 font-weight-bold ml-2" style="border-radius: 12px; font-size: 0.8rem;">
+                            <i class="fas fa-check-circle mr-1"></i> Plus de 6 mois d'ancienneté
+                        </span>
+                    @else
+                        <span class="badge badge-warning text-dark px-3 py-1 font-weight-bold ml-2" style="border-radius: 12px; font-size: 0.8rem; background-color: #ffc107;">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> Moins de 6 mois d'ancienneté
+                        </span>
+                    @endif
+                </div>
+                <p class="ri-seniority-desc mb-0">
+                    @if($has_min_seniority ?? false)
+                        <i class="fas fa-info-circle mr-1"></i> Vous possédez plus de 6 mois d'ancienneté. Vous bénéficiez d'un accès complet à tous les types de demandes de congés.
+                    @else
+                        <i class="fas fa-info-circle mr-1"></i> En tant que nouvel employé (< 6 mois), vous n'avez pas le droit de demander de congé normal (congé payé). Seuls les cas spéciaux (décès, mariage, maladie, ou cas exceptionnel avec justification) sont autorisés.
+                    @endif
+                </p>
+            </div>
         </div>
     </div>
-    <br>
+    @endif
     <br>
     {{-- ============================================================
          STAT CARDS
@@ -44,7 +76,7 @@
                         <div class="ri-stat-icon"><i class="fas fa-users"></i></div>
                         <div class="ri-stat-body">
                             <div class="ri-stat-value">{{ $total_employees ?? 0 }}</div>
-                            <div class="ri-stat-label">Employés actifs</div>
+                            <div class="ri-stat-label">Employés</div>
                         </div>
                         @if($userType == 1)
                         <a href="{{ url('admin/employees/list') }}" class="ri-stat-link">
@@ -76,7 +108,7 @@
                         <div class="ri-stat-icon"><i class="fas fa-user-tie"></i></div>
                         <div class="ri-stat-body">
                             <div class="ri-stat-value">{{ $total_clients ?? 0 }}</div>
-                            <div class="ri-stat-label">Clients actifs</div>
+                            <div class="ri-stat-label">Clients</div>
                         </div>
                         @if($userType == 1)
                         <a href="{{ url('admin/clients/list') }}" class="ri-stat-link">Gérer <i class="fas fa-arrow-right"></i></a>
@@ -177,11 +209,11 @@
                             </div>
                             @if(in_array($userType, [1, 4]))
                             <div class="ri-info-row">
-                                <span class="ri-info-key"><i class="fas fa-users ri-info-ico"></i> Employés actifs</span>
+                                <span class="ri-info-key"><i class="fas fa-users ri-info-ico"></i> Employés</span>
                                 <span class="ri-info-val ri-info-num">{{ $total_employees ?? 0 }}</span>
                             </div>
                             <div class="ri-info-row">
-                                <span class="ri-info-key"><i class="fas fa-user-tie ri-info-ico"></i> Clients actifs</span>
+                                <span class="ri-info-key"><i class="fas fa-user-tie ri-info-ico"></i> Clients</span>
                                 <span class="ri-info-val ri-info-num">{{ $total_clients ?? 0 }}</span>
                             </div>
                             @elseif($userType == 2)
@@ -614,6 +646,73 @@
     background: #0D2030;
     border-color: #00ADEF;
     color: #E8EAF0 !important;
+}
+
+/* --- Seniority Banner --- */
+.ri-seniority-banner {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.ri-seniority-eligible {
+    background: linear-gradient(135deg, #E8F8F5 0%, #D1F2EB 100%);
+    border-left: 5px solid #1ABC9C;
+    color: #0E6251;
+}
+
+.ri-seniority-restricted {
+    background: linear-gradient(135deg, #FEF9E7 0%, #FDEBD0 100%);
+    border-left: 5px solid #F39C12;
+    color: #7E5109;
+}
+
+.ri-seniority-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.ri-seniority-eligible .ri-seniority-icon { color: #16A085; }
+.ri-seniority-restricted .ri-seniority-icon { color: #D68910; }
+
+.ri-seniority-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.05rem;
+}
+
+.ri-seniority-desc {
+    font-size: 0.88rem;
+    line-height: 1.4;
+    opacity: 0.9;
+}
+
+[data-theme="dark"] .ri-seniority-eligible {
+    background: linear-gradient(135deg, #0B2922 0%, #11382E 100%);
+    border-left-color: #1ABC9C;
+    color: #A3E4D7;
+}
+
+[data-theme="dark"] .ri-seniority-restricted {
+    background: linear-gradient(135deg, #322509 0%, #47350F 100%);
+    border-left-color: #F39C12;
+    color: #FAD7A0;
+}
+
+[data-theme="dark"] .ri-seniority-icon {
+    background: rgba(0, 0, 0, 0.25);
 }
 
 /* --- Content wrapper bg --- */

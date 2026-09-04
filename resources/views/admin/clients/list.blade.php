@@ -73,7 +73,6 @@
                                             <th>Email</th>
                                             <th>Téléphone</th>
                                             <th>Adresse</th>
-                                            <th>Statut</th>
                                             <th>Créé par</th>
                                             <th>Date de création</th>
                                             @if(in_array(Auth::user()->user_type, [1, 4]))
@@ -91,13 +90,6 @@
                                                 <td>{{ $value->email }}</td>
                                                 <td>{{ $value->phone }}</td>
                                                 <td>{{ $value->address }}</td>
-                                                <td>
-                                                    @if($value->status == 0)
-                                                        <span class="badge badge-success">Actif</span>
-                                                    @else
-                                                        <span class="badge badge-danger">Inactif</span>
-                                                    @endif
-                                                </td>
                                                 <td>{{ $value->creator_name ?? 'Inconnu' }}</td>
                                                 <td>{{ date('d/m/Y | H:i A', strtotime($value->created_at)) }}</td>
                                                 @if(in_array(Auth::user()->user_type, [1, 4]))
@@ -111,7 +103,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="10" class="text-center">Aucun client trouvé.</td>
+                                                <td colspan="9" class="text-center">Aucun client trouvé.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>

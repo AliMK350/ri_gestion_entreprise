@@ -29,13 +29,6 @@
                                     <label>Contenu</label>
                                     <textarea class="form-control" name="contenu" rows="5" required>{{ old('contenu', $annonce->contenu) }}</textarea>
                                 </div>
-                                <div class="form-group">
-                                    <label>Statut</label>
-                                    <select class="form-control" name="status" required>
-                                        <option value="active" {{ old('status', $annonce->status) == 'active' ? 'selected' : '' }}>Actif</option>
-                                        <option value="inactive" {{ old('status', $annonce->status) == 'inactive' ? 'selected' : '' }}>Inactif</option>
-                                    </select>
-                                </div>
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary">Mettre à jour</button>

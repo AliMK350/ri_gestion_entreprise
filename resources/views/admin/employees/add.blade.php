@@ -12,7 +12,6 @@
                 <div class="form-group"><label>Département</label><input type="text" name="department" class="form-control" value="{{ old('department') }}"></div>
                 <div class="form-group"><label>CV (PDF / Word)</label><input type="file" name="cv_file" class="form-control" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></div>
                 <div class="form-group"><label>Date d'embauche</label><input type="date" name="hired_at" class="form-control" value="{{ old('hired_at') }}"></div>
-                <div class="form-group"><label>Statut *</label><select name="status" class="form-control"><option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Actif</option><option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Inactif</option></select></div>
                 <div class="form-group"><label>Compte utilisateur lié</label><select name="user_id" class="form-control"><option value="">— Aucun —</option>@foreach($users as $u)<option value="{{ $u->id }}" {{ old('user_id') == $u->id ? 'selected' : '' }}>{{ $u->name }} ({{ $u->email }})</option>@endforeach</select></div>
                 <div class="border rounded p-3 mt-3">
                     <h5>Créer un compte utilisateur</h5>

@@ -46,6 +46,8 @@ class EmployeeUserRoleTest extends TestCase
             $table->string('cv_path')->nullable();
             $table->date('hired_at')->nullable();
             $table->tinyInteger('status')->default(0);
+            $table->decimal('leave_balance_days', 5, 2)->default(0.00);
+            $table->date('last_leave_reset_at')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
         });

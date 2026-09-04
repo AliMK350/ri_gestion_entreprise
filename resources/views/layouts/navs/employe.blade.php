@@ -10,12 +10,14 @@
         <p>Mon Profil</p>
     </a>
 </li>
-<li class="nav-item">
-    <a href="{{ url('employe/personnel') }}" class="nav-link @if (Request::segment(2) == 'personnel') active @endif">
-        <i class="nav-icon fas fa-id-card"></i>
-        <p>Annuaire Personnel</p>
-    </a>
-</li>
+@if(Auth::user()->user_type == 1 || Auth::user()->user_type == 4)
+    <li class="nav-item">
+        <a href="{{ url('employe/personnel') }}" class="nav-link @if (Request::segment(2) == 'personnel') active @endif">
+            <i class="nav-icon fas fa-id-card"></i>
+            <p>Annuaire Personnel</p>
+        </a>
+    </li>
+@endif
 <li class="nav-item">
     <a href="{{ url($personnelUrlPrefix.'/absences') }}" class="nav-link @if (Request::segment(2) == 'absences' || Request::segment(2) == 'leaves') active @endif">
         <i class="nav-icon fas fa-calendar-times"></i>

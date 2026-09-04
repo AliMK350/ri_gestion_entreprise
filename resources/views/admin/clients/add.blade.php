@@ -45,13 +45,6 @@
                                         <label>Adresse</label>
                                         <textarea class="form-control" name="address" rows="3" placeholder="Entrez l'adresse">{{ old('address') }}</textarea>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Statut <span style="color: red;">*</span></label>
-                                        <select class="form-control" name="status" required>
-                                            <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Actif</option>
-                                            <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Inactif</option>
-                                        </select>
-                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Enregistrer</button>

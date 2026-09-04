@@ -29,9 +29,9 @@ class userSeeder extends Seeder
         $secretaire = User::where('email', 'secretaire@example.com')->first();
         $gerant     = User::where('email', 'gerant@example.com')->first();
 
-        Employee::updateOrCreate(
-            ['email' => 'employe@example.com'],
+        $employeesData = [
             [
+                'email'      => 'employe@example.com',
                 'user_id'    => $employe->id,
                 'name'       => 'Joshua Employé',
                 'phone'      => '0600000001',
@@ -39,42 +39,30 @@ class userSeeder extends Seeder
                 'department' => 'Production',
                 'hired_at'   => '2024-01-15',
                 'status'     => 0,
-            ]
-        );
-
-        // Profil Employee pour la secrétaire (20 jours de congé)
-        Employee::updateOrCreate(
-            ['email' => 'secretaire@example.com'],
+            ],
             [
-                'user_id'            => $secretaire->id,
-                'name'               => 'Jane Secrétaire',
-                'phone'              => '0600000010',
-                'position'           => 'Secrétaire',
-                'department'         => 'Administration',
-                'hired_at'           => '2024-03-01',
-                'status'             => 0,
-                'leave_balance_days' => 20,
-            ]
-        );
-
-        // Profil Employee pour le gérant (20 jours de congé)
-        Employee::updateOrCreate(
-            ['email' => 'gerant@example.com'],
+                'email'      => 'secretaire@example.com',
+                'user_id'    => $secretaire->id,
+                'name'       => 'Jane Secrétaire',
+                'phone'      => '0600000010',
+                'position'   => 'Secrétaire',
+                'department' => 'Administration',
+                'hired_at'   => '2024-03-01',
+                'status'     => 0,
+            ],
             [
-                'user_id'            => $gerant->id,
-                'name'               => 'Michael Gérant',
-                'phone'              => '0600000020',
-                'position'           => 'Gérant',
-                'department'         => 'Direction',
-                'hired_at'           => '2023-01-01',
-                'status'             => 0,
-                'leave_balance_days' => 20,
-            ]
-        );
-
-        Employee::updateOrCreate(
-            ['email' => 'marie@entreprise.com'],
+                'email'      => 'gerant@example.com',
+                'user_id'    => $gerant->id,
+                'name'       => 'Michael Gérant',
+                'phone'      => '0600000020',
+                'position'   => 'Gérant',
+                'department' => 'Direction',
+                'hired_at'   => '2023-01-01',
+                'status'     => 0,
+            ],
             [
+                'email'      => 'marie@entreprise.com',
+                'user_id'    => null,
                 'name'       => 'Marie Dupont',
                 'phone'      => '0600000002',
                 'position'   => 'Comptable',
@@ -82,7 +70,13 @@ class userSeeder extends Seeder
                 'hired_at'   => '2023-06-01',
                 'status'     => 0,
             ]
-        );
+        ];
+
+        foreach ($employeesData as $empData) {
+            $employee = Employee::updateOrCreate(['email' => $empData['email']], $empData);
+            $employee->leave_balance_days = $employee->calculateAccruedBalanceFromHiredAt();
+            $employee->save();
+        }
 
         Intern::updateOrCreate(
             ['email' => 'stagiaire@entreprise.com'],

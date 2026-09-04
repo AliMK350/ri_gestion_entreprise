@@ -30,7 +30,6 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Titre</th>
-                                        <th>Statut</th>
                                         <th>Date de création</th>
                                         <th>Actions</th>
                                     </tr>
@@ -40,13 +39,6 @@
                                     <tr>
                                         <td>{{ $annonce->id }}</td>
                                         <td>{{ $annonce->title }}</td>
-                                        <td>
-                                            @if($annonce->status == 'active')
-                                                <span class="badge badge-success">Actif</span>
-                                            @else
-                                                <span class="badge badge-danger">Inactif</span>
-                                            @endif
-                                        </td>
                                         <td>{{ $annonce->created_at->format('d/m/Y') }}</td>
                                         <td>
                                             <a href="{{ url('admin/annonces/edit/'.$annonce->id) }}" class="btn btn-warning btn-sm">Modifier</a>
