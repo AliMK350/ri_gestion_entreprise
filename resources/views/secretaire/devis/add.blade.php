@@ -174,8 +174,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let itemIndex = 0;
     const tbody = document.getElementById('itemsTableBody');
 
-    const defaultUnits = ['Unité', 'Heure', 'Jour', 'Forfait', 'Mois', 'Kg', 'm²'];
-    const defaultTvas  = [20, 10, 7, 0];
+    const defaultUnits = ['Unité', 'Heure', 'Jour', 'Forfait', 'Mois'];
+    const defaultTvas  = [20];
 
     function createRow(data = {}) {
         itemIndex++;
