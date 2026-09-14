@@ -9,7 +9,8 @@
                 <div class="form-group"><label>Email *</label><input type="email" name="email" class="form-control" required value="{{ old('email') }}"><div class="text-danger">{{ $errors->first('email') }}</div></div>
                 <div class="form-group"><label>Téléphone</label><input type="text" name="phone" class="form-control" value="{{ old('phone') }}"></div>
                 <div class="form-group"><label>Poste</label><input type="text" name="position" class="form-control" value="{{ old('position') }}"></div>
-                <div class="form-group"><label>Département</label><input type="text" name="department" class="form-control" value="{{ old('department') }}"></div>
+                <div class="form-group"><label>Spécialité</label><input type="text" name="specialite" class="form-control" value="{{ old('specialite') }}"></div>
+                <div class="form-group"><label>Ville</label><input type="text" name="city" class="form-control" value="{{ old('city') }}"></div>
                 <div class="form-group"><label>CV (PDF / Word)</label><input type="file" name="cv_file" class="form-control" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></div>
                 <div class="form-group"><label>Date d'embauche</label><input type="date" name="hired_at" class="form-control" value="{{ old('hired_at') }}"></div>
                 <div class="form-group"><label>Compte utilisateur lié</label><select name="user_id" class="form-control"><option value="">— Aucun —</option>@foreach($users as $u)<option value="{{ $u->id }}" {{ old('user_id') == $u->id ? 'selected' : '' }}>{{ $u->name }} ({{ $u->email }})</option>@endforeach</select></div>

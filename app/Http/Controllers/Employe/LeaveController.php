@@ -114,8 +114,8 @@ class LeaveController extends Controller
         $startDate = Carbon::parse($leave->start_date);
         $today = Carbon::today();
 
-        if ($startDate->lte($today)) {
-            return redirect($this->personnelUrl('absences'))->with('error', 'Vous ne pouvez annuler un congé qu\'avant son début.');
+        if ($startDate->lt($today->copy()->addDays(5))) {
+            return redirect($this->personnelUrl('absences'))->with('error', 'Vous pouvez annuler un congé jusqu\'à 5 jours avant sa date de début.');
         }
 
         $daysToRefund = (new Leave())->calculateWorkingDays($startDate, $leave->end_date);

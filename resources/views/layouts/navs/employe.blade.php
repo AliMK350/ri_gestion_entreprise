@@ -24,3 +24,9 @@
         <p>Absences & Congés</p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ url('employe/document-requests') }}" class="nav-link @if (Request::segment(2) == 'document-requests') active @endif">
+        <i class="nav-icon fas fa-file-signature"></i>
+        <p>Documents administratifs</p>
+    </a>
+</li>

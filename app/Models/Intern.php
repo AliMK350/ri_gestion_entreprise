@@ -8,7 +8,7 @@ use Request;
 class Intern extends Model
 {
     protected $fillable = [
-        'name', 'email', 'phone', 'department', 'cv_path', 'started_at', 'ended_at',
+        'name', 'email', 'phone', 'specialite', 'city', 'niveau_etude', 'cv_path', 'started_at', 'ended_at',
     ];
 
     protected $casts = [
@@ -23,8 +23,8 @@ class Intern extends Model
         if (!empty(Request::get('name'))) {
             $return = $return->where('name', 'like', '%' . Request::get('name') . '%');
         }
-        if (!empty(Request::get('department'))) {
-            $return = $return->where('department', 'like', '%' . Request::get('department') . '%');
+        if (!empty(Request::get('specialite'))) {
+            $return = $return->where('specialite', 'like', '%' . Request::get('specialite') . '%');
         }
 
         return $return->orderBy('id', 'desc')->paginate(10);

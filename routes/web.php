@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AbsenceController as AdminAbsenceController;
 use App\Http\Controllers\Admin\AttestationController;
 use App\Http\Controllers\Admin\ClientController as AdminClientController;
+use App\Http\Controllers\Admin\CvtechController;
+use App\Http\Controllers\Admin\DocumentRequestController as AdminDocumentRequestController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InternController;
 use App\Http\Controllers\Admin\JourFerieController;
@@ -11,8 +13,10 @@ use App\Http\Controllers\Admin\LeaveController as AdminLeaveController;
 use App\Http\Controllers\Admin\PersonnelController as AdminPersonnelController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\Employe\AbsenceController as EmployeAbsenceController;
 use App\Http\Controllers\Employe\DashboardController as EmployeDashboardController;
+use App\Http\Controllers\Employe\DocumentRequestController as EmployeDocumentRequestController;
 use App\Http\Controllers\Employe\LeaveController as EmployeLeaveController;
 use App\Http\Controllers\Employe\PersonnelController as EmployePersonnelController;
 use App\Http\Controllers\Employe\ProfileController;
@@ -35,9 +39,13 @@ Route::get('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/forgot-password', [AuthController::class, 'postForgotPassword']);
 Route::get('/reset/{token}', [AuthController::class, 'reset']);
 Route::post('/reset/{token}', [AuthController::class, 'postResetPassword']);
+Route::middleware(['auth'])->group(function () {
+    Route::get('/change-password', [PasswordController::class, 'edit'])->name('password.change');
+    Route::post('/change-password', [PasswordController::class, 'update'])->name('password.update');
+});
 
 // Admin
-Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['admin', 'force.password.change'], 'prefix' => 'admin'], function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard']);
 
     Route::group(['prefix' => 'admin'], function () {
@@ -100,6 +108,18 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
 
     Route::get('/personnel', [AdminPersonnelController::class, 'index']);
 
+    Route::get('/document-requests', [AdminDocumentRequestController::class, 'index']);
+    Route::post('/document-requests/{id}', [AdminDocumentRequestController::class, 'update']);
+
+    Route::group(['prefix' => 'cvtech'], function () {
+        Route::get('/list', [CvtechController::class, 'list']);
+        Route::get('/add', [CvtechController::class, 'add']);
+        Route::post('/add', [CvtechController::class, 'insert']);
+        Route::post('/upload-cv/{id}', [CvtechController::class, 'uploadCv']);
+        Route::get('/cv/{id}', [CvtechController::class, 'viewCv']);
+        Route::get('/delete/{id}', [CvtechController::class, 'delete']);
+    });
+
     Route::group(['prefix' => 'clients'], function () {
         Route::get('/list', [AdminClientController::class, 'list']);
         Route::get('/add', [AdminClientController::class, 'add']);
@@ -125,7 +145,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
 });
 
 // Secrétaire
-Route::group(['middleware' => 'secretaire', 'prefix' => 'secretaire'], function () {
+Route::group(['middleware' => ['secretaire', 'force.password.change'], 'prefix' => 'secretaire'], function () {
     Route::get('/dashboard', [SecretaireDashboardController::class, 'dashboard']);
 
     Route::group(['prefix' => 'clients'], function () {
@@ -175,10 +195,12 @@ Route::group(['middleware' => 'secretaire', 'prefix' => 'secretaire'], function 
 });
 
 // Employé
-Route::group(['middleware' => 'employe', 'prefix' => 'employe'], function () {
+Route::group(['middleware' => ['employe', 'force.password.change'], 'prefix' => 'employe'], function () {
     Route::get('/dashboard', [EmployeDashboardController::class, 'dashboard']);
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::get('/personnel', [EmployePersonnelController::class, 'index']);
+    Route::get('/document-requests', [EmployeDocumentRequestController::class, 'index']);
+    Route::post('/document-requests', [EmployeDocumentRequestController::class, 'store']);
 
     Route::get('/absences', [EmployeAbsenceController::class, 'index'])->name('employe.absences.index');
     Route::get('/absences/create', [EmployeAbsenceController::class, 'create'])->name('employe.absences.create');
@@ -192,7 +214,7 @@ Route::group(['middleware' => 'employe', 'prefix' => 'employe'], function () {
 });
 
 // Gérant
-Route::group(['middleware' => 'gerant', 'prefix' => 'gerant'], function () {
+Route::group(['middleware' => ['gerant', 'force.password.change'], 'prefix' => 'gerant'], function () {
     Route::get('/dashboard', [GerantDashboardController::class, 'dashboard']);
 
     Route::group(['prefix' => 'clients'], function () {

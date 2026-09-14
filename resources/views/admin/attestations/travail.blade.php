@@ -143,9 +143,9 @@
                 en qualité de <span class="highlight">{{ $employee->position }}</span>
             @endif
 
-            @if($employee->department)
-                , au sein du département
-                <span class="highlight">{{ $employee->department }}</span>
+            @if($employee->specialite)
+                , dans la spécialité
+                <span class="highlight">{{ $employee->specialite }}</span>
             @endif
 
             @if($hired_at_fr)

@@ -13,9 +13,25 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class DevisController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-        $data['getRecord']    = Quote::with(['client', 'seller'])->orderBy('created_at', 'desc')->get();
+        $query = Quote::with(['client', 'seller'])->orderBy('created_at', 'desc');
+        $query->when($request->filled('search'), function ($query) use ($request) {
+            $search = trim($request->search);
+            $query->where(function ($query) use ($search) {
+                $query->where('reference', 'like', "%{$search}%")
+                    ->orWhereHas('client', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('company_name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('seller', fn ($query) => $query->where('name', 'like', "%{$search}%"));
+            });
+        });
+        $query->when($request->filled('status'), fn ($query) => $query->where('status', $request->status));
+        $query->when($request->filled('date_from'), fn ($query) => $query->whereDate('quote_date', '>=', $request->date_from));
+        $query->when($request->filled('date_to'), fn ($query) => $query->whereDate('quote_date', '<=', $request->date_to));
+
+        $data['getRecord']    = $query->paginate(15)->withQueryString();
         $data['header_title'] = 'Gestion des Devis';
         return view('secretaire.devis.list', $data);
     }

@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 use Tests\TestCase;
 
 class LeaveMailNotificationTest extends TestCase
@@ -189,5 +190,75 @@ class LeaveMailNotificationTest extends TestCase
         Mail::assertSent(LeaveDecisionMail::class, function ($mail) use ($employeeUser, $admin) {
             return $mail->hasTo($employeeUser->email) || $mail->hasTo($admin->email);
         });
+    }
+
+    public function test_employee_can_cancel_exactly_five_days_before_start(): void
+    {
+        Carbon::setTestNow('2026-09-10');
+
+        try {
+            $employeeUser = User::factory()->create([
+                'email' => 'employee-five-days@company.com',
+                'password' => 'password',
+                'user_type' => 2,
+                'is_delete' => 0,
+            ]);
+            $employee = Employee::create([
+                'user_id' => $employeeUser->id,
+                'name' => 'Five Days Employee',
+                'email' => 'employee-five-days-profile@company.com',
+                'leave_balance_days' => 15,
+            ]);
+            $leave = Leave::create([
+                'employee_id' => $employee->id,
+                'start_date' => '2026-09-15',
+                'end_date' => '2026-09-15',
+                'type' => 'vacation',
+                'status' => 'approved',
+            ]);
+
+            $this->actingAs($employeeUser);
+            (new EmployeLeaveController())->cancel($leave->id);
+
+            $this->assertSame('cancelled', $leave->fresh()->status);
+            $this->assertSame(16, (int) $employee->fresh()->leave_balance_days);
+        } finally {
+            Carbon::setTestNow();
+        }
+    }
+
+    public function test_employee_cannot_cancel_four_days_before_start(): void
+    {
+        Carbon::setTestNow('2026-09-10');
+
+        try {
+            $employeeUser = User::factory()->create([
+                'email' => 'employee-four-days@company.com',
+                'password' => 'password',
+                'user_type' => 2,
+                'is_delete' => 0,
+            ]);
+            $employee = Employee::create([
+                'user_id' => $employeeUser->id,
+                'name' => 'Four Days Employee',
+                'email' => 'employee-four-days-profile@company.com',
+                'leave_balance_days' => 15,
+            ]);
+            $leave = Leave::create([
+                'employee_id' => $employee->id,
+                'start_date' => '2026-09-14',
+                'end_date' => '2026-09-14',
+                'type' => 'vacation',
+                'status' => 'approved',
+            ]);
+
+            $this->actingAs($employeeUser);
+            (new EmployeLeaveController())->cancel($leave->id);
+
+            $this->assertSame('approved', $leave->fresh()->status);
+            $this->assertSame(15, (int) $employee->fresh()->leave_balance_days);
+        } finally {
+            Carbon::setTestNow();
+        }
     }
 }

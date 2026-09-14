@@ -9,9 +9,20 @@ use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-        $data['getRecord']    = Client::where('is_delete', 0)->orderBy('created_at', 'desc')->get();
+        $query = Client::where('is_delete', 0)->orderBy('created_at', 'desc');
+        $query->when($request->filled('search'), function ($query) use ($request) {
+            $search = trim($request->search);
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%");
+            });
+        });
+        $query->when($request->filled('client_type'), fn ($query) => $query->where('client_type', $request->client_type));
+        $data['getRecord']    = $query->paginate(15)->withQueryString();
         $data['header_title'] = 'Gestion des Clients';
         return view('secretaire.clients.list', $data);
     }
@@ -27,16 +38,20 @@ class ClientController extends Controller
         $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => 'required|email|unique:clients',
+            'client_type'  => 'required|in:entreprise,personne',
             'company_name' => 'nullable|string|max:255',
             'phone'        => 'nullable|string|max:50',
+            'city'         => 'nullable|string|max:255',
             'address'      => 'nullable|string',
         ]);
 
         $client               = new Client;
         $client->name         = trim($request->name);
         $client->email        = trim($request->email);
+        $client->client_type  = $request->client_type;
         $client->company_name = trim($request->company_name);
         $client->phone        = trim($request->phone);
+        $client->city         = trim($request->city);
         $client->address      = trim($request->address);
         $client->created_by   = Auth::user()->id;
         $client->save();
@@ -59,8 +74,10 @@ class ClientController extends Controller
         $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => 'required|email|unique:clients,email,' . $id,
+            'client_type'  => 'required|in:entreprise,personne',
             'company_name' => 'nullable|string|max:255',
             'phone'        => 'nullable|string|max:50',
+            'city'         => 'nullable|string|max:255',
             'address'      => 'nullable|string',
         ]);
 
@@ -71,8 +88,10 @@ class ClientController extends Controller
 
         $client->name         = trim($request->name);
         $client->email        = trim($request->email);
+        $client->client_type  = $request->client_type;
         $client->company_name = trim($request->company_name);
         $client->phone        = trim($request->phone);
+        $client->city         = trim($request->city);
         $client->address      = trim($request->address);
         $client->save();
 

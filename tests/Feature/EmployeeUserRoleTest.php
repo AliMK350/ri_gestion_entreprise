@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ class EmployeeUserRoleTest extends TestCase
             $table->string('password');
             $table->tinyInteger('user_type')->default(3);
             $table->tinyInteger('is_delete')->default(0);
+            $table->boolean('must_change_password')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -42,13 +44,34 @@ class EmployeeUserRoleTest extends TestCase
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('position')->nullable();
-            $table->string('department')->nullable();
+            $table->string('specialite')->nullable();
+            $table->string('city')->nullable();
             $table->string('cv_path')->nullable();
             $table->date('hired_at')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->decimal('leave_balance_days', 5, 2)->default(0.00);
             $table->date('last_leave_reset_at')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->timestamps();
+        });
+
+        $this->app['db']->connection()->getSchemaBuilder()->create('cvtech_people', function (Blueprint $table) {
+            $table->id();
+            $table->string('person_type');
+            $table->string('source_type')->nullable();
+            $table->unsignedBigInteger('source_id')->nullable();
+            $table->string('name');
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('city')->nullable();
+            $table->string('specialite')->nullable();
+            $table->string('cv_path')->nullable();
+            $table->string('position')->nullable();
+            $table->string('niveau_etude')->nullable();
+            $table->date('started_at')->nullable();
+            $table->date('ended_at')->nullable();
+            $table->date('hired_at')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -64,7 +87,8 @@ class EmployeeUserRoleTest extends TestCase
             'email' => 'employee@example.com',
             'phone' => '0600000000',
             'position' => 'Développeur',
-            'department' => 'IT',
+            'specialite' => 'IT',
+            'city' => 'Casablanca',
             'status' => '0',
             'new_user_name' => 'Slimane',
             'new_user_email' => 'slimane@example.com',
@@ -79,6 +103,10 @@ class EmployeeUserRoleTest extends TestCase
 
         $this->assertNotNull($user);
         $this->assertSame(2, $user->user_type);
+        $this->assertTrue((bool) $user->must_change_password);
+        $employee = Employee::where('email', 'employee@example.com')->first();
+        $this->assertSame('IT', $employee->specialite);
+        $this->assertSame('Casablanca', $employee->city);
         $this->assertTrue($response->isRedirect());
     }
 }

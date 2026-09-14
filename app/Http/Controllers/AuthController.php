@@ -43,6 +43,10 @@ class AuthController extends Controller
         if ($user && Hash::check($request->password, $user->password)) {
             Auth::login($user, $remember);
 
+            if ($user->must_change_password) {
+                return redirect()->route('password.change');
+            }
+
             $userType = Auth::user()->user_type;
             if ($userType == 1) {
                 return redirect('admin/dashboard');

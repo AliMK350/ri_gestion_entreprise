@@ -9,7 +9,7 @@ use Request;
 class Employee extends Model
 {
     protected $fillable = [
-        'user_id', 'name', 'email', 'phone', 'position', 'department', 'cv_path', 'hired_at', 'status', 'leave_balance_days', 'last_leave_reset_at',
+        'user_id', 'name', 'email', 'phone', 'position', 'specialite', 'city', 'cv_path', 'hired_at', 'status', 'leave_balance_days', 'last_leave_reset_at',
     ];
 
     protected $casts = [
@@ -30,6 +30,11 @@ class Employee extends Model
     public function leaves()
     {
         return $this->hasMany(Leave::class);
+    }
+
+    public function documentRequests()
+    {
+        return $this->hasMany(DocumentRequest::class);
     }
 
     public function getSeniorityDate(): ?Carbon

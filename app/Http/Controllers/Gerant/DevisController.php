@@ -14,11 +14,28 @@ class DevisController extends Controller
         return request()->segment(1); // 'admin' or 'gerant'
     }
 
-    public function list()
+    public function list(Request $request)
     {
         $prefix = $this->prefix();
-        $data['getRecord']    = Quote::with('client')->orderBy('created_at', 'desc')->get();
+        $query = Quote::with('client')->orderBy('created_at', 'desc');
+
+        $query->when($request->filled('search'), function ($query) use ($request) {
+            $search = trim($request->search);
+            $query->where(function ($query) use ($search) {
+                $query->where('reference', 'like', "%{$search}%")
+                    ->orWhereHas('client', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('company_name', 'like', "%{$search}%");
+                    });
+            });
+        });
+        $query->when($request->filled('status'), fn ($query) => $query->where('status', $request->status));
+        $query->when($request->filled('date_from'), fn ($query) => $query->whereDate('quote_date', '>=', $request->date_from));
+        $query->when($request->filled('date_to'), fn ($query) => $query->whereDate('quote_date', '<=', $request->date_to));
+
+        $data['getRecord']    = $query->paginate(15)->withQueryString();
         $data['header_title'] = 'Validation des Devis';
+        $data['prefix']       = $prefix;
         return view($prefix . '.devis.list', $data);
     }
 

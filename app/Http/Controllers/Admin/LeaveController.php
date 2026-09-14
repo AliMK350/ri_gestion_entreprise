@@ -12,9 +12,18 @@ use Illuminate\Support\Facades\Mail;
 
 class LeaveController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-        $data['getRecord']    = Leave::getLeaves();
+        $query = Leave::with('employee')->orderBy('created_at', 'desc');
+        $query->when($request->filled('search'), function ($query) use ($request) {
+            $search = trim($request->search);
+            $query->whereHas('employee', fn ($query) => $query->where('name', 'like', "%{$search}%"));
+        });
+        $query->when($request->filled('status'), fn ($query) => $query->where('status', $request->status));
+        $query->when($request->filled('type'), fn ($query) => $query->where('type', $request->type));
+        $query->when($request->filled('date_from'), fn ($query) => $query->whereDate('start_date', '>=', $request->date_from));
+        $query->when($request->filled('date_to'), fn ($query) => $query->whereDate('end_date', '<=', $request->date_to));
+        $data['getRecord']    = $query->paginate(10)->withQueryString();
         $data['header_title'] = 'Gestion des Congés';
         return view('admin.leaves.list', $data);
     }

@@ -15,6 +15,16 @@
     <section class="content">
         <div class="container-fluid">
             @include('_message')
+            <form method="get" class="card card-body mb-3">
+                <div class="form-row align-items-end">
+                    <div class="form-group col-md-4 mb-2"><label for="search">Recherche</label><input id="search" type="search" name="search" class="form-control" value="{{ request('search') }}" placeholder="Référence ou client"></div>
+                    <div class="form-group col-md-3 mb-2"><label for="status">Statut</label><select id="status" name="status" class="form-control"><option value="">Tous les statuts</option><option value="draft" @selected(request('status') === 'draft')>Brouillon</option><option value="sent" @selected(request('status') === 'sent')>Envoyé</option><option value="accepted" @selected(request('status') === 'accepted')>Accepté</option><option value="rejected" @selected(request('status') === 'rejected')>Refusé</option></select></div>
+                    <div class="form-group col-md-2 mb-2"><label for="date_from">Du</label><input id="date_from" type="date" name="date_from" class="form-control" value="{{ request('date_from') }}"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="date_to">Au</label><input id="date_to" type="date" name="date_to" class="form-control" value="{{ request('date_to') }}"></div>
+                    <div class="form-group col-md-1 mb-2"><button class="btn btn-primary btn-block" title="Filtrer"><i class="fas fa-search"></i></button></div>
+                </div>
+                @if(request()->hasAny(['search', 'status', 'date_from', 'date_to']))<a href="{{ url(request()->path()) }}" class="small">Réinitialiser les filtres</a>@endif
+            </form>
             <div class="card card-outline card-primary shadow-sm">
                 <div class="card-body p-0 table-responsive">
                     <table class="table table-striped table-hover align-middle mb-0">
@@ -76,6 +86,7 @@
                     </table>
                 </div>
             </div>
+            <div class="mt-3">{{ $getRecord->links() }}</div>
         </div>
     </section>
 </div>

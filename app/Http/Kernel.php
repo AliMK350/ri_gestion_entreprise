@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'secretaire' => \App\Http\Middleware\SecretaireMiddleware::class,
         'employe' => \App\Http\Middleware\EmployeMiddleware::class,
         'gerant' => \App\Http\Middleware\GerantMiddleware::class,
+        'force.password.change' => \App\Http\Middleware\ForcePasswordChange::class,
     ];
 }

@@ -54,6 +54,18 @@
     </a>
 </li>
 <li class="nav-item">
+    <a href="{{ url('admin/cvtech/list') }}" class="nav-link @if (Request::segment(1) == 'admin' && Request::segment(2) == 'cvtech') active @endif">
+        <i class="nav-icon fas fa-address-book"></i>
+        <p>CVTech</p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ url('admin/document-requests') }}" class="nav-link @if (Request::segment(1) == 'admin' && Request::segment(2) == 'document-requests') active @endif">
+        <i class="nav-icon fas fa-file-signature"></i>
+        <p>Demandes de documents</p>
+    </a>
+</li>
+<li class="nav-item">
     <a href="{{ url('admin/clients/list') }}" class="nav-link @if (Request::segment(1) == 'admin' && Request::segment(2) == 'clients') active @endif">
         <i class="nav-icon fas fa-user-tie"></i>
         <p>Clients</p>

@@ -9,9 +9,24 @@ use Illuminate\Http\Request;
 
 class AbsenceController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-        $data['getRecord']    = Absence::with('employee')->orderBy('date', 'desc')->paginate(15);
+        $query = Absence::with('employee')->orderBy('date', 'desc');
+        $query->when($request->filled('search'), function ($query) use ($request) {
+            $search = trim($request->search);
+            $query->whereHas('employee', fn ($query) => $query->where('name', 'like', "%{$search}%"));
+        });
+        $query->when($request->filled('half_day'), $request->half_day === 'full' ? fn ($query) => $query->whereNull('half_day') : fn ($query) => $query->where('half_day', $request->half_day));
+        $query->when($request->filled('declared_by'), fn ($query) => $query->where('declared_by', $request->declared_by));
+        $query->when($request->filled('justification'), $request->justification === 'yes' ? fn ($query) => $query->whereNotNull('justification_file') : fn ($query) => $query->whereNull('justification_file'));
+        $query->when($request->filled('reason'), $request->reason === 'yes' ? fn ($query) => $query->whereNotNull('reason')->where('reason', '!=', '') : fn ($query) => $query->where(function ($query) { $query->whereNull('reason')->orWhere('reason', ''); }));
+        $query->when($request->filled('date_from'), fn ($query) => $query->whereDate('date', '>=', $request->date_from));
+        $query->when($request->filled('date_to'), fn ($query) => $query->whereDate('date', '<=', $request->date_to));
+        $data['employees'] = Employee::where('status', 0)->orderBy('name')->get(['id', 'name']);
+        $query->when($request->filled('employee_id'), fn ($query) => $query->where('employee_id', $request->employee_id));
+        $sort = in_array($request->get('sort'), ['date', 'created_at'], true) ? $request->get('sort') : 'date';
+        $direction = $request->get('direction') === 'asc' ? 'asc' : 'desc';
+        $data['getRecord']    = $query->orderBy($sort, $direction)->paginate(15)->withQueryString();
         $data['header_title'] = 'Gestion des Absences';
         return view('admin.absences.list', $data);
     }

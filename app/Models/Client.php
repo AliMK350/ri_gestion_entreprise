@@ -15,9 +15,11 @@ class Client extends Model
     protected $fillable = [
         'name',
         'company_name',
+        'client_type',
         'email',
         'phone',
         'address',
+        'city',
         'status',
         'is_delete',
         'created_by',
@@ -25,8 +27,7 @@ class Client extends Model
 
     static public function getClients()
     {
-        $return = self::select('clients.*', 'users.name as creator_name')
-            ->join('users', 'users.id', '=', 'clients.created_by', 'left')
+        $return = self::select('clients.*')
             ->where('clients.is_delete', '=', 0);
 
         if (!empty(Request::get('name'))) {
@@ -37,6 +38,12 @@ class Client extends Model
         }
         if (!empty(Request::get('email'))) {
             $return = $return->where('clients.email', 'like', '%' . Request::get('email') . '%');
+        }
+        if (!empty(Request::get('city'))) {
+            $return = $return->where('clients.city', 'like', '%' . Request::get('city') . '%');
+        }
+        if (!empty(Request::get('client_type'))) {
+            $return = $return->where('clients.client_type', '=', Request::get('client_type'));
         }
         $return = $return->orderBy('clients.id', 'desc')->paginate(10);
 

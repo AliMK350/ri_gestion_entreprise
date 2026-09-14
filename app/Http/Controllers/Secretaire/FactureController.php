@@ -11,9 +11,25 @@ use Illuminate\Http\Request;
 
 class FactureController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-        $data['getRecord']    = Invoice::with('client')->orderBy('created_at', 'desc')->get();
+        $query = Invoice::with('client')->orderBy('created_at', 'desc');
+        $query->when($request->filled('search'), function ($query) use ($request) {
+            $search = trim($request->search);
+            $query->where(function ($query) use ($search) {
+                $query->where('reference', 'like', "%{$search}%")
+                    ->orWhereHas('client', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('company_name', 'like', "%{$search}%");
+                    });
+            });
+        });
+        $query->when($request->filled('status'), fn ($query) => $query->where('status', $request->status));
+        $query->when($request->filled('paid'), fn ($query) => $query->where('paid', $request->paid));
+        $query->when($request->filled('date_from'), fn ($query) => $query->whereDate('issued_at', '>=', $request->date_from));
+        $query->when($request->filled('date_to'), fn ($query) => $query->whereDate('issued_at', '<=', $request->date_to));
+
+        $data['getRecord']    = $query->paginate(15)->withQueryString();
         $data['header_title'] = 'Gestion des Factures';
         return view('secretaire.factures.list', $data);
     }

@@ -111,8 +111,8 @@
         <p>
             Nous soussignés, la société <span class="highlight">RI COMMUNICATION</span>, certifions par la présente
             que <span class="highlight">{{ $intern->name }}</span>
-            @if($intern->department)
-                a effectué un stage au sein de notre société, dans le département <span class="highlight">{{ $intern->department }}</span>,
+            @if($intern->specialite)
+                a effectué un stage au sein de notre société, dans la spécialité <span class="highlight">{{ $intern->specialite }}</span>,
             @else
                 a effectué un stage au sein de notre société,
             @endif

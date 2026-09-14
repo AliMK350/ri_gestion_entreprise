@@ -9,7 +9,8 @@
             <p><strong>Email:</strong> {{ $getRecord->email }}</p>
             <p><strong>Téléphone:</strong> {{ $getRecord->phone }}</p>
             <p><strong>Poste:</strong> {{ $getRecord->position }}</p>
-            <p><strong>Département:</strong> {{ $getRecord->department }}</p>
+            <p><strong>Spécialité:</strong> {{ $getRecord->specialite ?? '-' }}</p>
+            <p><strong>Ville:</strong> {{ $getRecord->city ?? '-' }}</p>
             <p><strong>Embauché le:</strong> {{ optional($getRecord->hired_at)->format('d/m/Y') }}</p>
         </div></div>
         @else

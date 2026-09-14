@@ -4,7 +4,7 @@
     <section class="content-header"><div class="container-fluid"><h1>Fiche Employé — {{ $getRecord->name }}</h1></div></section>
     <section class="content"><div class="container-fluid">
         <div class="card"><div class="card-body">
-            <p><strong>Email:</strong> {{ $getRecord->email }} | <strong>Poste:</strong> {{ $getRecord->position }} | <strong>Département:</strong> {{ $getRecord->department }}</p>
+            <p><strong>Email:</strong> {{ $getRecord->email }} | <strong>Téléphone:</strong> {{ $getRecord->phone ?? '-' }} | <strong>Ville:</strong> {{ $getRecord->city ?? '-' }} | <strong>Poste:</strong> {{ $getRecord->position }} | <strong>Spécialité:</strong> {{ $getRecord->specialite ?? '-' }}</p>
         </div></div>
         <div class="card"><div class="card-header"><h3>Absences</h3></div><div class="card-body p-0">
             <table class="table"><thead><tr><th>Date</th><th>Motif</th></tr></thead><tbody>

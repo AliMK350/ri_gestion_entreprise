@@ -25,20 +25,24 @@ class ClientController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:clients',
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:clients',
+            'client_type'  => 'required|in:entreprise,personne',
             'company_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:50',
-            'address' => 'nullable|string',
+            'phone'        => 'nullable|string|max:50',
+            'city'         => 'nullable|string|max:255',
+            'address'      => 'nullable|string',
         ]);
 
-        $client = new Client;
-        $client->name = trim($request->name);
-        $client->email = trim($request->email);
+        $client               = new Client;
+        $client->name         = trim($request->name);
+        $client->email        = trim($request->email);
+        $client->client_type  = $request->client_type;
         $client->company_name = trim($request->company_name);
-        $client->phone = trim($request->phone);
-        $client->address = trim($request->address);
-        $client->created_by = Auth::user()->id;
+        $client->phone        = trim($request->phone);
+        $client->city         = trim($request->city);
+        $client->address      = trim($request->address);
+        $client->created_by   = Auth::user()->id;
         $client->save();
 
         return redirect('admin/clients/list')->with('success', 'Client créé avec succès');
@@ -58,11 +62,13 @@ class ClientController extends Controller
     public function update($id, Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:clients,email,' . $id,
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:clients,email,' . $id,
+            'client_type'  => 'required|in:entreprise,personne',
             'company_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:50',
-            'address' => 'nullable|string',
+            'phone'        => 'nullable|string|max:50',
+            'city'         => 'nullable|string|max:255',
+            'address'      => 'nullable|string',
         ]);
 
         $client = Client::getSingle($id);
@@ -70,11 +76,13 @@ class ClientController extends Controller
             abort(404);
         }
 
-        $client->name = trim($request->name);
-        $client->email = trim($request->email);
+        $client->name         = trim($request->name);
+        $client->email        = trim($request->email);
+        $client->client_type  = $request->client_type;
         $client->company_name = trim($request->company_name);
-        $client->phone = trim($request->phone);
-        $client->address = trim($request->address);
+        $client->phone        = trim($request->phone);
+        $client->city         = trim($request->city);
+        $client->address      = trim($request->address);
         $client->save();
 
         return redirect('admin/clients/list')->with('success', 'Client mis à jour avec succès');

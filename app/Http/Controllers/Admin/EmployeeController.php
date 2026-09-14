@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CvtechPerson;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,9 +12,27 @@ use Illuminate\Support\Facades\Storage;
 
 class EmployeeController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-        $data['getRecord']    = Employee::getEmployees();
+        $query = Employee::with('user');
+        $query->when($request->filled('search'), function ($query) use ($request) {
+            $search = trim($request->search);
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%");
+            });
+        });
+        $query->when($request->filled('city'), fn ($query) => $query->where('city', 'like', '%' . trim($request->city) . '%'));
+        $query->when($request->filled('position'), fn ($query) => $query->where('position', 'like', '%' . trim($request->position) . '%'));
+        $query->when($request->filled('specialite'), fn ($query) => $query->where('specialite', 'like', '%' . trim($request->specialite) . '%'));
+        $query->when($request->filled('status'), fn ($query) => $query->where('status', $request->status));
+        $query->when($request->filled('account'), fn ($query) => $request->account === 'yes' ? $query->whereNotNull('user_id') : $query->whereNull('user_id'));
+        $query->when($request->filled('cv'), fn ($query) => $request->cv === 'yes' ? $query->whereNotNull('cv_path') : $query->whereNull('cv_path'));
+        $query->when($request->filled('hired_from'), fn ($query) => $query->whereDate('hired_at', '>=', $request->hired_from));
+        $query->when($request->filled('hired_to'), fn ($query) => $query->whereDate('hired_at', '<=', $request->hired_to));
+        $data['getRecord']    = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
         $data['header_title'] = 'Liste des Employés';
         return view('admin.employees.list', $data);
     }
@@ -32,7 +51,8 @@ class EmployeeController extends Controller
             'email'             => 'required|email|unique:employees',
             'phone'             => 'nullable|string|max:50',
             'position'          => 'nullable|string|max:255',
-            'department'        => 'nullable|string|max:255',
+            'specialite'        => 'nullable|string|max:255',
+            'city'              => 'nullable|string|max:255',
             'cv_file'           => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'hired_at'          => 'nullable|date',
             'user_id'           => 'nullable|exists:users,id',
@@ -62,6 +82,7 @@ class EmployeeController extends Controller
             $user->name = trim($request->new_user_name);
             $user->email = trim($request->new_user_email);
             $user->password = Hash::make($request->new_user_password);
+            $user->must_change_password = true;
             $user->user_type = intval($request->new_user_role ?? 3);
             $user->save();
 
@@ -80,12 +101,14 @@ class EmployeeController extends Controller
         $employee->email      = trim($request->email);
         $employee->phone      = trim($request->phone);
         $employee->position   = trim($request->position);
-        $employee->department = trim($request->department);
+        $employee->specialite = trim($request->specialite);
+        $employee->city       = trim($request->city);
         $employee->cv_path    = $cvPath;
         $employee->hired_at   = $request->hired_at;
         $employee->user_id    = $userId;
         $employee->leave_balance_days = $employee->calculateAccruedBalanceFromHiredAt();
         $employee->save();
+        CvtechPerson::syncEmployee($employee);
 
         return redirect('admin/employees/list')->with('success', 'Employé créé avec succès');
     }
@@ -108,7 +131,8 @@ class EmployeeController extends Controller
             'email'             => 'required|email|unique:employees,email,' . $id,
             'phone'             => 'nullable|string|max:50',
             'position'          => 'nullable|string|max:255',
-            'department'        => 'nullable|string|max:255',
+            'specialite'        => 'nullable|string|max:255',
+            'city'              => 'nullable|string|max:255',
             'cv_file'           => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'hired_at'          => 'nullable|date',
             'user_id'           => 'nullable|exists:users,id',
@@ -137,6 +161,7 @@ class EmployeeController extends Controller
             $user->name = trim($request->new_user_name);
             $user->email = trim($request->new_user_email);
             $user->password = Hash::make($request->new_user_password);
+            $user->must_change_password = true;
             $user->user_type = intval($request->new_user_role ?? 3);
             $user->save();
 
@@ -161,10 +186,12 @@ class EmployeeController extends Controller
         $employee->email      = trim($request->email);
         $employee->phone      = trim($request->phone);
         $employee->position   = trim($request->position);
-        $employee->department = trim($request->department);
+        $employee->specialite = trim($request->specialite);
+        $employee->city       = trim($request->city);
         $employee->hired_at   = $request->hired_at;
         $employee->user_id    = $userId;
         $employee->save();
+        CvtechPerson::syncEmployee($employee);
 
         return redirect('admin/employees/list')->with('success', 'Employé mis à jour avec succès');
     }

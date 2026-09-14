@@ -12,37 +12,56 @@
                     <div class="col-sm-6">
                         @if(in_array(Auth::user()->user_type, [1, 4]))
                         <div class="float-sm-right">
-                            <a href="{{ url('admin/clients/add') }}" class="btn btn-primary"> Ajouter un nouveau Client</a>
+                            <a href="{{ url('admin/clients/add') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Ajouter un nouveau Client
+                            </a>
                         </div>
                         @endif
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
-        
+
         <div class="content">
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Rechercher un Client</h3>
+                        <h3 class="card-title"><i class="fas fa-search"></i> Rechercher un Client</h3>
                     </div>
                     <form action="" method="get">
                         <div class="card-body">
                             <div class="row">
-                                <div class="form-group col-md-3">
-                                    <input type="text" class="form-control" name="name"
-                                        value="{{ Request::get('name') }}" placeholder="Nom du client">
+                                <div class="form-group col-md-2">
+                                    <label>Type de Client</label>
+                                    <select class="form-control" name="client_type">
+                                        <option value="">Tous les types</option>
+                                        <option value="entreprise" {{ Request::get('client_type') == 'entreprise' ? 'selected' : '' }}>Entreprise</option>
+                                        <option value="personne" {{ Request::get('client_type') == 'personne' ? 'selected' : '' }}>Personne</option>
+                                    </select>
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
+                                    <label>Nom du client</label>
+                                    <input type="text" class="form-control" name="name"
+                                        value="{{ Request::get('name') }}" placeholder="Nom">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label>Entreprise</label>
                                     <input type="text" class="form-control" name="company_name"
                                         value="{{ Request::get('company_name') }}" placeholder="Entreprise">
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
+                                    <label>Ville</label>
+                                    <input type="text" class="form-control" name="city"
+                                        value="{{ Request::get('city') }}" placeholder="Ville">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label>Email</label>
                                     <input type="text" class="form-control" name="email"
                                         value="{{ Request::get('email') }}" placeholder="Email">
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2" style="margin-top: 32px;">
                                     <button class="btn btn-primary" type="submit"> Rechercher </button>
+                                    <a href="{{ url('admin/clients/list') }}" class="btn btn-secondary">Réinitialiser</a>
                                 </div>
                             </div>
                         </div>
@@ -68,13 +87,13 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Nom</th>
+                                            <th>Type</th>
+                                            <th>Nom / Responsable</th>
                                             <th>Entreprise</th>
                                             <th>Email</th>
                                             <th>Téléphone</th>
+                                            <th>Ville</th>
                                             <th>Adresse</th>
-                                            <th>Créé par</th>
-                                            <th>Date de création</th>
                                             @if(in_array(Auth::user()->user_type, [1, 4]))
                                             <th>Actions</th>
                                             @endif
@@ -85,13 +104,23 @@
                                         @forelse ($getRecord as $value)
                                             <tr>
                                                 <td>{{ ++$i }}</td>
+                                                <td>
+                                                    @if($value->client_type == 'personne')
+                                                        <span class="badge badge-secondary" style="font-size: 0.9rem;">
+                                                            <i class="fas fa-user"></i> Personne
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-info" style="font-size: 0.9rem;">
+                                                            <i class="fas fa-building"></i> Entreprise
+                                                        </span>
+                                                    @endif
+                                                </td>
                                                 <td>{{ $value->name }}</td>
-                                                <td>{{ $value->company_name }}</td>
+                                                <td>{{ $value->company_name ?? '-' }}</td>
                                                 <td>{{ $value->email }}</td>
-                                                <td>{{ $value->phone }}</td>
-                                                <td>{{ $value->address }}</td>
-                                                <td>{{ $value->creator_name ?? 'Inconnu' }}</td>
-                                                <td>{{ date('d/m/Y | H:i A', strtotime($value->created_at)) }}</td>
+                                                <td>{{ $value->phone ?? '-' }}</td>
+                                                <td>{{ $value->city ?? '-' }}</td>
+                                                <td>{{ $value->address ?? '-' }}</td>
                                                 @if(in_array(Auth::user()->user_type, [1, 4]))
                                                 <td>
                                                     <a href="{{ url('admin/clients/edit/' . $value->id) }}"

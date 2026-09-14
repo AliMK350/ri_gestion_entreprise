@@ -51,6 +51,12 @@
         <p>Consultation Personnel</p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ url('admin/cvtech/list') }}" class="nav-link @if (Request::segment(2) == 'cvtech') active @endif">
+        <i class="nav-icon fas fa-address-book"></i>
+        <p>CVTech</p>
+    </a>
+</li>
 
 <li class="nav-header" style="color:#e67e22; font-size:0.62rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; padding: 10px 1rem 2px; border-top: 1px solid rgba(0,0,0,0.07); margin-top:6px;">
     <i class="fas fa-file-invoice-dollar mr-1"></i> Facturation & Devis

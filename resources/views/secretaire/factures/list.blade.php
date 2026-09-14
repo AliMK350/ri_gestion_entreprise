@@ -19,6 +19,16 @@
         <div class="container-fluid">
             @include('_message')
             @include('secretaire._quicknav')
+            <form method="get" class="card card-body mb-3">
+                <div class="form-row align-items-end">
+                    <div class="form-group col-md-4 mb-2"><label for="search">Recherche</label><input id="search" type="search" name="search" class="form-control" value="{{ request('search') }}" placeholder="Référence ou client"></div>
+                    <div class="form-group col-md-3 mb-2"><label for="status">Statut</label><select id="status" name="status" class="form-control"><option value="">Tous les statuts</option><option value="draft" @selected(request('status') === 'draft')>Brouillon</option><option value="sent" @selected(request('status') === 'sent')>Envoyée</option><option value="validated" @selected(request('status') === 'validated')>Validée</option><option value="cancelled" @selected(request('status') === 'cancelled')>Annulée</option></select></div>
+                    <div class="form-group col-md-2 mb-2"><label for="paid">Paiement</label><select id="paid" name="paid" class="form-control"><option value="">Tous</option><option value="1" @selected(request('paid') === '1')>Payée</option><option value="0" @selected(request('paid') === '0')>En attente</option></select></div>
+                    <div class="form-group col-md-2 mb-2"><label for="date_from">Du</label><input id="date_from" type="date" name="date_from" class="form-control" value="{{ request('date_from') }}"></div>
+                    <div class="form-group col-md-1 mb-2"><button class="btn btn-success btn-block" title="Filtrer"><i class="fas fa-search"></i></button></div>
+                </div>
+                @if(request()->hasAny(['search', 'status', 'paid', 'date_from']))<a href="{{ url(request()->path()) }}" class="small">Réinitialiser les filtres</a>@endif
+            </form>
             <div class="card card-outline card-success shadow-sm">
                 <div class="card-body p-0 table-responsive">
                     <table class="table table-striped table-hover align-middle mb-0">
@@ -73,6 +83,7 @@
                     </table>
                 </div>
             </div>
+            <div class="mt-3">{{ $getRecord->links() }}</div>
         </div>
     </section>
 </div>
