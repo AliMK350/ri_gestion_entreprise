@@ -1,0 +1,694 @@
+GUIDE EXACT DE DEPLOIEMENT — APPLICATION DE GESTION RI
+======================================================
+
+Application : Laravel 10
+Serveur cible recommandé : Ubuntu 22.04 ou 24.04 LTS
+Serveur web recommandé : Nginx
+Base de données : MySQL 8 ou MariaDB 10.5+
+Domaine à remplacer partout : gestion.example.com
+Utilisateur système conseillé : deploy
+Emplacement conseillé : /var/www/ri_gestion_entreprise
+
+IMPORTANT AVANT TOUT DEPLOIEMENT
+--------------------------------
+
+1. Aucun mot de passe réel, aucune clé SMTP et aucune clé privée ne doivent être
+   copiés depuis le fichier .env local vers le serveur.
+2. Le dossier .env ne doit jamais être mis sur Git.
+3. Le dépôt Git doit être accessible en lecture depuis le serveur.
+4. La base de données de production doit être créée avec un compte dédié, pas avec root.
+5. Le mot de passe du compte de production doit être généré et conservé dans un
+   gestionnaire de mots de passe de l'entreprise.
+6. Les comptes créés par le seeder utilisent le mot de passe « password ».
+   Ils ne doivent pas être utilisés en production sans modification immédiate.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 1 — SERVEUR INITIAL
+──────────────────────────────────────────────────────────────────────────────
+
+1. Se connecter au serveur avec SSH
+
+ssh administrateur@ADRESSE_IP_DU_SERVEUR
+
+Remplacez ADRESSE_IP_DU_SERVEUR par l'adresse publique ou privée du serveur.
+
+2. Mettre à jour le système
+
+sudo apt update
+sudo apt upgrade -y
+
+3. Installer les outils nécessaires
+
+sudo apt install -y curl git unzip nginx mariadb-server mariadb-client
+
+4. Installer PHP 8.2 et les extensions nécessaires
+
+sudo apt install -y software-properties-common
+sudo add-apt-repository -y ppa:ondrej/php
+sudo apt update
+
+sudo apt install -y php8.2 php8.2-cli php8.2-fpm php8.2-mysql \
+php8.2-mbstring php8.2-xml php8.2-curl php8.2-zip php8.2-gd \
+php8.2-bcmath php8.2-intl
+
+Vérifier :
+
+php -v
+php-fpm8.2 -v
+
+5. Installer Composer
+
+cd /tmp
+curl -sS https://getcomposer.org/installer -o composer-setup.php
+php composer-setup.php
+sudo mv composer.phar /usr/local/bin/composer
+rm composer-setup.php
+composer --version
+
+6. Installer Node.js 20 avec npm
+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+node --version
+npm --version
+
+7. Installer et démarrer MySQL/MariaDB
+
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
+sudo mysql_secure_installation
+
+8. Autoriser SSH, Nginx et HTTPS dans le pare-feu
+
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+sudo ufw status
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 2 — CRÉER L'UTILISATEUR ET LES DOSSIERS
+──────────────────────────────────────────────────────────────────────────────
+
+1. Créer l'utilisateur de déploiement
+
+sudo adduser deploy
+sudo usermod -aG sudo deploy
+
+2. Se connecter avec cet utilisateur
+
+exit
+ssh deploy@ADRESSE_IP_DU_SERVEUR
+
+3. Créer le dossier du projet
+
+sudo mkdir -p /var/www/ri_gestion_entreprise
+sudo chown -R deploy:www-data /var/www/ri_gestion_entreprise
+sudo chmod -R 775 /var/www/ri_gestion_entreprise
+
+4. Cloner le dépôt dans le dossier
+
+cd /var/www
+git clone URL_DU_DEPOT_GIT ri_gestion_entreprise
+
+Remplacez URL_DU_DEPOT_GIT par l'URL réelle du dépôt de l'entreprise.
+Le dossier doit ensuite contenir artisan, composer.json et package.json.
+
+5. Vérifier que le clone est correct
+
+cd /var/www/ri_gestion_entreprise
+ls -la
+
+test -f artisan && echo "Projet Laravel trouvé"
+test -f composer.json && echo "Composer trouvé"
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 3 — BASE DE DONNÉES DE PRODUCTION
+──────────────────────────────────────────────────────────────────────────────
+
+1. Se connecter à MySQL/MariaDB
+
+sudo mysql
+
+2. Créer la base et le compte applicatif
+
+COLLER CE BLOC DANS MYSQL, EN CHANGEANT LES DEUX MOTS DE PASSE :
+
+CREATE DATABASE ri_management_production
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+CREATE USER 'ri_app'@'localhost'
+    IDENTIFIED BY 'REMPLACER_PAR_UN_MOT_DE_PASSE_LONG_ET_UNIQUE';
+
+GRANT ALL PRIVILEGES ON ri_management_production.* TO 'ri_app'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+Le mot de passe ci-dessus doit être indépendant du mot de passe SSH et du mot
+de passe du compte administrateur.
+
+3. Tester le compte applicatif
+
+mysql -u ri_app -p ri_management_production
+
+Il faut pouvoir se connecter. Quittez ensuite avec EXIT;.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 4 — INSTALLER LES DÉPENDANCES
+──────────────────────────────────────────────────────────────────────────────
+
+cd /var/www/ri_gestion_entreprise
+
+1. Installer les dépendances PHP de production
+
+composer install --no-dev --optimize-autoloader
+
+2. Installer les dépendances front-end
+
+npm ci
+npm run build
+
+Si package-lock.json est absent dans le serveur après le clonage, utiliser :
+
+npm install
+npm run build
+
+Ne lancez pas npm run dev sur un serveur de production.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 5 — CRÉER ET PROTÉGER LA CONFIGURATION .env
+──────────────────────────────────────────────────────────────────────────────
+
+1. Créer le fichier
+
+cd /var/www/ri_gestion_entreprise
+cp .env.example .env
+chmod 640 .env
+
+2. Modifier le fichier avec nano
+
+nano .env
+
+Remplacer le contenu par une configuration similaire à celle-ci.
+Toutes les valeurs après les mots « PROD_ » sont à générer ou remplacer.
+Ne conserve pas les vrais secrets du poste de développement.
+
+APP_NAME="RI Gestion Entreprise"
+APP_ENV=production
+APP_KEY=
+APP_DEBUG=false
+APP_URL=https://gestion.example.com
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=error
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ri_management_production
+DB_USERNAME=ri_app
+DB_PASSWORD=REMPLACER_PAR_LE_MOT_DE_PASSE_SQL
+
+BROADCAST_CONNECTION=log
+CACHE_STORE=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=true
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+MAIL_MAILER=smtp
+MAIL_HOST=serveur-smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=notification@example.com
+MAIL_PASSWORD=REMPLACER_PAR_UN_MOT_DE_PASSE_DAPPLICATION
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="notification@example.com"
+MAIL_FROM_NAME="RH RI Communication"
+
+LEAVE_ADMIN_NOTIFICATION_EMAIL=responsable-rh@example.com
+LEAVE_EMPLOYEE_NOTIFICATION_EMAIL=destinataire-employe@example.com
+DOCUMENT_REQUEST_ADMIN_NOTIFICATION_EMAIL=responsable-rh@example.com
+
+3. Générer la clé Laravel
+
+php artisan key:generate
+
+La ligne APP_KEY= doit ensuite contenir une valeur commençant par base64:.
+Ne générez jamais cette clé une seconde fois en production une fois que des
+sessions ou données chiffrées existent, sauf après une procédure validée.
+
+4. Vérifier rapidement que le fichier est complet
+
+grep '^APP_KEY=' .env
+grep '^DB_DATABASE=' .env
+grep '^APP_URL=' .env
+
+5. Vider les caches avant la suite
+
+php artisan optimize:clear
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 6 — MIGRER LA BASE DE DONNÉES
+──────────────────────────────────────────────────────────────────────────────
+
+1. Vérifier la configuration
+
+php artisan config:show database
+php artisan config:show mail
+
+La commande config:show peut afficher des secrets. Ne publiez pas sa sortie.
+
+2. Appliquer les migrations
+
+php artisan migrate --force
+
+Cette commande crée ou met à jour la structure de la base.
+Ne lancez jamais migrate:fresh sur le serveur de production : elle supprime toutes
+les données.
+
+3. Vérifier les migrations
+
+php artisan migrate:status
+
+Toutes les migrations doivent être marquées « Ran ».
+
+4. Seeders
+
+N'exécutez les seeders en production que si l'application les a explicitement
+validés avec le responsable métier, car ils peuvent créer ou modifier des comptes.
+Dans un premier déploiement contrôlé, la commande est :
+
+php artisan db:seed --force
+
+Les comptes suivants sont créés ou mis à jour par le seeder et leur mot de passe
+initial est « password » :
+
+- admin@example.com
+- secretaire@example.com
+- employe@example.com
+- gerant@example.com
+
+Après le premier accès :
+1. changez tous ces mots de passe ;
+2. supprimez les comptes de démonstration inutiles ;
+3. vérifiez les adresses e-mail enregistrées ;
+4. confirmez les rôles et les droits avec le responsable métier.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 7 — FICHIERS, STOCKAGE ET PERMISSIONS
+──────────────────────────────────────────────────────────────────────────────
+
+cd /var/www/ri_gestion_entreprise
+
+Créer le lien vers storage/public :
+
+php artisan storage:link
+
+Si un ancien lien est présent et ne doit plus être utilisé :
+
+rm public/storage
+php artisan storage:link
+
+N'exécutez rm public/storage que si public/storage est un lien symbolique.
+
+Définir les propriétaires et permissions :
+
+sudo chown -R deploy:www-data /var/www/ri_gestion_entreprise
+sudo find /var/www/ri_gestion_entreprise -type d -exec chmod 775 {} \;
+sudo find /var/www/ri_gestion_entreprise -type f -exec chmod 664 {} \;
+sudo chmod -R ug+rwX storage bootstrap/cache
+chmod 640 .env
+
+Créer les dossiers attendus si nécessaire :
+
+mkdir -p storage/framework/cache/data
+mkdir -p storage/framework/sessions
+mkdir -p storage/framework/views
+mkdir -p storage/logs
+chmod -R ug+rwX storage bootstrap/cache
+
+Vérifier que PHP-FPM peut écrire dans storage et bootstrap/cache :
+
+namei -l /var/www/ri_gestion_entreprise/storage
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 8 — CONFIGURATION NGINX
+──────────────────────────────────────────────────────────────────────────────
+
+1. Créer la configuration du domaine
+
+sudo nano /etc/nginx/sites-available/ri_gestion_entreprise
+
+Ajouter cette configuration HTTP temporaire :
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name gestion.example.com;
+    root /var/www/ri_gestion_entreprise/public;
+
+    index index.php index.html;
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+
+    client_max_body_size 20M;
+}
+
+2. Activer le site
+
+sudo ln -s /etc/nginx/sites-available/ri_gestion_entreprise \
+  /etc/nginx/sites-enabled/ri_gestion_entreprise
+
+sudo nginx -t
+sudo systemctl enable nginx
+sudo systemctl enable php8.2-fpm
+sudo systemctl restart php8.2-fpm
+sudo systemctl restart nginx
+
+3. Vérifier les services
+
+systemctl status nginx --no-pager
+systemctl status php8.2-fpm --no-pager
+
+4. Activer HTTPS avec Certbot
+
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d gestion.example.com
+
+Test automatique du renouvellement :
+
+sudo certbot renew --dry-run
+
+Après Certbot, ouvrir : https://gestion.example.com
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 9 — CACHE LARAVEL POUR LA PRODUCTION
+──────────────────────────────────────────────────────────────────────────────
+
+cd /var/www/ri_gestion_entreprise
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+
+Après toute modification du fichier .env, exécuter :
+
+php artisan optimize:clear
+
+Puis recréer les caches autorisés par la mise en production :
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+
+Note : le cache de configuration ne doit pas être utilisé tant que APP_KEY
+ou les variables de base de données et de messagerie peuvent encore changer.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 10 — PLANIFICATION ET TÂCHES AUTOMATIQUES
+──────────────────────────────────────────────────────────────────────────────
+
+Le projet ne contient pas, dans sa structure courante, de service de files ou de
+cron Laravel identifié comme obligatoire pour le démarrage. Vérifiez néanmoins les
+horaires et notifications métier, puis ajoutez le scheduler Laravel si nécessaire.
+
+Commande standard à ajouter dans crontab :
+
+crontab -e
+
+Ajouter à la fin :
+
+* * * * * cd /var/www/ri_gestion_entreprise && php artisan schedule:run >> /dev/null 2>&1
+
+Ne l'activez que si le scheduler est utilisé par le projet.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 11 — VÉRIFICATIONS FINALES
+──────────────────────────────────────────────────────────────────────────────
+
+Dans le navigateur :
+
+https://gestion.example.com
+
+Dans le terminal :
+
+php artisan migrate:status
+php artisan route:list
+php artisan about
+systemctl status nginx --no-pager
+systemctl status php8.2-fpm --no-pager
+sudo nginx -t
+sudo certbot certificates
+
+Contrôler les journaux :
+
+sudo tail -n 100 /var/log/nginx/ri_gestion_entreprise.error.log
+sudo tail -n 100 /var/www/ri_gestion_entreprise/storage/logs/laravel.log
+
+Le fichier de journal Nginx personnalisé ci-dessus n'existe pas tant qu'il n'est
+pas ajouté dans la configuration server. Laravel journalise ses erreurs dans
+storage/logs/laravel.log.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 12 — SAUVEGARDE AVANT MISE EN PRODUCTION
+──────────────────────────────────────────────────────────────────────────────
+
+1. Sauvegarde de la base de données
+
+sudo mkdir -p /var/backups/ri-gestion
+sudo mysqldump -u ri_app -p ri_management_production \
+  > /var/backups/ri-gestion/ri_management_production.sql
+
+En production, stockez aussi la sauvegarde hors du serveur.
+Ne conservez pas le mot de passe dans l'historique du shell.
+
+2. Sauvegarde des fichiers importants
+
+sudo tar -czf /var/backups/ri-gestion/application-files.tar.gz \
+  -C /var/www ri_gestion_entreprise \
+  --exclude=ri_gestion_entreprise/vendor \
+  --exclude=ri_gestion_entreprise/node_modules \
+  --exclude=ri_gestion_entreprise/.git
+
+Ces archives doivent contenir .env et les fichiers de storage, selon les règles de
+confidentialité de l'entreprise. Protégez-les en lecture seule et chiffrez-les lors
+d'un transfert hors site.
+
+3. Vérifier les archives
+
+ls -lh /var/backups/ri-gestion
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 13 — PROCÉDURE DE MISE À JOUR
+──────────────────────────────────────────────────────────────────────────────
+
+1. Se placer dans le projet et sauvegarder
+
+cd /var/www/ri_gestion_entreprise
+sudo -u deploy git status
+
+2. Mettre l'application temporairement hors ligne si nécessaire
+
+php artisan down --secret="cle-de-maintenance-a-generer"
+
+Conserver précieusement l'adresse temporaire affichée par Laravel.
+
+3. Sauvegarder la base
+
+sudo mysqldump -u ri_app -p ri_management_production \
+  > /var/backups/ri-gestion/avant-mise-a-jour.sql
+
+4. Mettre à jour le dépôt
+
+git fetch --all
+git checkout BRANCH_DE_PRODUCTION
+git pull origin BRANCH_DE_PRODUCTION
+
+Remplacez BRANCH_DE_PRODUCTION par la branche approuvée, généralement main ou master.
+
+5. Installer les dépendances
+
+composer install --no-dev --optimize-autoloader
+npm ci
+npm run build
+
+6. Exécuter les migrations
+
+php artisan migrate --force
+
+7. Reconstruire les caches et remettre l'application en ligne
+
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+php artisan up
+
+8. Vérifier le résultat
+
+php artisan migrate:status
+
+Ouvrir https://gestion.example.com et tester les fonctions principales.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 14 — RETOUR ARRIÈRE
+──────────────────────────────────────────────────────────────────────────────
+
+Si une mise à jour échoue :
+
+1. Revenir à la version précédente approuvée :
+
+cd /var/www/ri_gestion_entreprise
+php artisan down
+git checkout COMMIT_OU_TAG_VALIDÉ
+git pull
+composer install --no-dev --optimize-autoloader
+npm ci
+npm run build
+
+2. Restaurer la base uniquement si la sauvegarde correspond exactement à cette
+version :
+
+mysql -u ri_app -p ri_management_production \
+  < /var/backups/ri-gestion/avant-mise-a-jour.sql
+
+3. Vider et reconstruire les caches :
+
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+php artisan up
+
+Ne restaurez pas une sauvegarde antérieure sans coordination avec les responsables
+métier : les nouvelles commandes ou données saisies depuis la sauvegarde seront perdues.
+
+──────────────────────────────────────────────────────────────────────────────
+PARTIE 15 — DÉPANNAGE
+──────────────────────────────────────────────────────────────────────────────
+
+ERREUR HTTP 500
+---------------
+
+cd /var/www/ri_gestion_entreprise
+php artisan optimize:clear
+sudo tail -n 100 storage/logs/laravel.log
+sudo tail -n 100 /var/log/nginx/error.log
+php artisan config:show app
+
+Vérifier surtout APP_KEY, les droits sur storage et bootstrap/cache, ainsi que la
+connexion MySQL. Ne laissez pas APP_DEBUG=true sur le serveur public.
+
+PERMISSIONS INCORRECTES
+-----------------------
+
+sudo chown -R deploy:www-data /var/www/ri_gestion_entreprise
+sudo find /var/www/ri_gestion_entreprise/storage -type d -exec chmod 775 {} \;
+sudo find /var/www/ri_gestion_entreprise/storage -type f -exec chmod 664 {} \;
+sudo find /var/www/ri_gestion_entreprise/bootstrap/cache -type d -exec chmod 775 {} \;
+sudo find /var/www/ri_gestion_entreprise/bootstrap/cache -type f -exec chmod 664 {} \;
+chmod 640 .env
+
+MESSAGE « Vite manifest not found »
+-----------------------------------
+
+Le message apparaît si public/build/manifest.json manque ou si le build est ancien.
+
+cd /var/www/ri_gestion_entreprise
+npm ci
+npm run build
+ls public/build/manifest.json
+php artisan optimize:clear
+
+CONNEXION MYSQL IMPOSSIBLE
+--------------------------
+
+sudo systemctl status mariadb --no-pager
+mysql -u ri_app -p ri_management_production
+
+grep '^DB_' .env
+php artisan config:clear
+php artisan migrate:status
+
+Ne publiez pas le résultat contenant DB_PASSWORD.
+
+PROBLÈME DE MAIL
+----------------
+
+php artisan config:clear
+php artisan tinker
+
+Dans Tinker, seulement si l'équipe valide l'envoi de test :
+
+Mail::raw('Test SMTP depuis le serveur de production', function ($message) {
+    $message->to('adresse-validee@example.com')->subject('Test SMTP');
+});
+
+Vérifiez ensuite storage/logs/laravel.log et les journaux du fournisseur SMTP.
+
+LIEN STORAGE MANQUANT
+--------------------
+
+cd /var/www/ri_gestion_entreprise
+ls -ld public/storage
+php artisan storage:link
+php artisan optimize:clear
+
+Si public/storage existe déjà comme dossier réel, renommez-le après sauvegarde
+avant de créer le lien symbolique :
+
+mv public/storage public/storage.local
+php artisan storage:link
+
+PAGE 404 OU 502
+---------------
+
+- Vérifier que le domaine pointe vers l'adresse IP du serveur.
+- Vérifier Nginx : sudo nginx -t
+- Vérifier PHP-FPM : sudo systemctl status php8.2-fpm --no-pager
+- Vérifier le socket : ls -l /run/php/php8.2-fpm.sock
+- Vérifier le journal : sudo tail -n 100 /var/log/nginx/error.log
+
+CONFIGURATION HTTPS INCORRECTE
+------------------------------
+
+sudo certbot certificates
+sudo nginx -t
+sudo systemctl reload nginx
+sudo certbot renew --dry-run
+
+──────────────────────────────────────────────────────────────────────────────
+FIN DU GUIDE
+
+Règle finale : ne passez le serveur en production qu'après avoir vérifié le HTTPS,
+les sauvegardes, les comptes d'accès, les adresses e-mail, les permissions, les
+logs et le bon fonctionnement de toutes les fonctions métier critiques.
